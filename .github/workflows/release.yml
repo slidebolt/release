@@ -1,0 +1,117 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options: [patch, minor, major]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: slidebolt/slidebolt
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch production.lock.json from main
+        run: |
+          curl -fsSL \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.raw+json" \
+            "https://api.github.com/repos/slidebolt/slidebolt/contents/work/prod/production.lock.json?ref=main" \
+            -o production.lock.json
+
+      - name: Bump version
+        id: version
+        run: |
+          CURRENT=$(cat VERSION | tr -d '[:space:]')
+          MAJOR=$(echo $CURRENT | cut -d. -f1 | tr -d 'v')
+          MINOR=$(echo $CURRENT | cut -d. -f2)
+          PATCH=$(echo $CURRENT | cut -d. -f3)
+
+          case "${{ inputs.bump }}" in
+            major) MAJOR=$((MAJOR+1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR+1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH+1)) ;;
+          esac
+
+          NEW="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "$NEW" > VERSION
+          echo "version=$NEW" >> $GITHUB_OUTPUT
+
+      - name: Commit bumped version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add VERSION
+          git commit -m "release: ${{ steps.version.outputs.version }}"
+          git tag ${{ steps.version.outputs.version }}
+          git push origin main --tags
+
+      - name: Download binaries from GitHub Releases
+        run: |
+          mkdir -p bin
+          ARCH=amd64
+
+          jq -c '.components[] | select(.enabled == true)' production.lock.json | while read component; do
+            BINARY=$(echo $component | jq -r '.binary')
+            MODULE=$(echo $component | jq -r '.module')
+            TAG=$(echo $component | jq -r '.tag')
+            REPO=$(echo $MODULE | sed 's|github.com/||')
+            VERSION=$(echo $TAG | tr -d 'v')
+            ASSET="${BINARY}_${VERSION}_linux_${ARCH}.tar.gz"
+
+            echo "Downloading $BINARY $TAG from $REPO..."
+            gh release download "$TAG" \
+              --repo "$REPO" \
+              --pattern "$ASSET" \
+              --output "/tmp/$ASSET"
+
+            tar -xzf "/tmp/$ASSET" -C bin/ "$BINARY"
+            chmod +x "bin/$BINARY"
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
+            ghcr.io/${{ env.IMAGE_NAME }}:latest
+          labels: |
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
+            org.opencontainers.image.source=https://github.com/slidebolt/release
+
+      - name: Create GitHub Release
+        run: |
+          gh release create ${{ steps.version.outputs.version }} \
+            --repo slidebolt/release \
+            --title "${{ steps.version.outputs.version }}" \
+            --notes "Built from production.lock.json on main at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
