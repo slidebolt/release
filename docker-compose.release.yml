@@ -32,12 +32,6 @@ services:
       - /media/gavin/storage1tb/containers/slidebolt/config:/opt/slidebolt/config
       - /media/gavin/storage1tb/containers/slidebolt/data:/opt/slidebolt/.build/data
       - /media/gavin/storage1tb/containers/slidebolt/logs:/opt/slidebolt/.build/logs
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.slidebolt-api.rule=Host(`smarthome.357graphics.com`)"
-      - "traefik.http.routers.slidebolt-api.entrypoints=websecure"
-      - "traefik.http.routers.slidebolt-api.tls=true"
-      - "traefik.http.services.slidebolt-api.loadbalancer.server.port=39011"
     restart: unless-stopped
 
   db:
