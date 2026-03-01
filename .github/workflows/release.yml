@@ -32,7 +32,7 @@ jobs:
           curl -fsSL \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.raw+json" \
-            "https://api.github.com/repos/slidebolt/slidebolt/contents/work/prod/production.lock.json?ref=main" \
+            "https://api.github.com/repos/slidebolt/slidebolt/contents/cmd/runner/templates/prod/production.lock.json?ref=main" \
             -o production.lock.json
 
       - name: Bump version
