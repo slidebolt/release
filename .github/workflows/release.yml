@@ -108,11 +108,29 @@ jobs:
             org.opencontainers.image.version=${{ steps.version.outputs.version }}
             org.opencontainers.image.source=https://github.com/slidebolt/release
 
+      - name: Set GHCR package visibility to public
+        run: |
+          set -euo pipefail
+          PACKAGE_NAME=slidebolt
+          OWNER="${{ github.repository_owner }}"
+
+          gh api \
+            --method PATCH \
+            "/orgs/${OWNER}/packages/container/${PACKAGE_NAME}/visibility" \
+            -f visibility=public \
+          || gh api \
+            --method PATCH \
+            "/user/packages/container/${PACKAGE_NAME}/visibility" \
+            -f visibility=public
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create GitHub Release
         run: |
           gh release create ${{ steps.version.outputs.version }} \
             --repo slidebolt/release \
             --title "${{ steps.version.outputs.version }}" \
+            --latest \
             --notes "Built from production.lock.json on main at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
