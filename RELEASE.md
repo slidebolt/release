@@ -2,26 +2,52 @@
 
 This repository orchestrates the official release process for the entire Slidebolt ecosystem.
 
-## How to Trigger a Release
+## Confirmed Release Order (Source First)
 
-Official releases are triggered using the `Makefile`, which uses the GitHub CLI (`gh`) to initiate remote workflows.
+This is the verified order that produces a successful end-to-end release.
 
-### Steps:
+1. **Release source repos first (raw modules)**
+   - Commit code changes in each affected raw repo.
+   - Ensure `go.mod` only references tags that exist on remote.
+   - Run `go mod tidy` so `go.sum` is complete.
+   - Create patch tags and push `main --tags`.
 
-1.  **Ensure you are on the `main` branch** and have the latest changes.
-2.  **Determine the release type**:
-    *   **Patch**: Bug fixes and minor updates (`v1.0.1` -> `v1.0.2`)
-    *   **Minor**: New features, non-breaking (`v1.0.2` -> `v1.1.0`)
-    *   **Major**: Breaking changes (`v1.1.0` -> `v2.0.0`)
-3.  **Run the command**:
-    ```bash
-    make release-patch  # or release-minor, release-major
-    ```
+2. **Wait for component release workflows to finish**
+   - Each tagged component repo must publish GitHub Release assets, not just tags.
+   - Required asset format is:
+     - `{binary}_{version}_linux_amd64.tar.gz`
+   - Example: `gateway_1.6.3_linux_amd64.tar.gz`.
 
-## What Happens Next?
+3. **Update production lock in slidebolt/slidebolt**
+   - Update `cmd/runner/templates/prod/production.lock.json` to the new component tags.
+   - Push to `main` before triggering this repo’s release workflow.
 
-1.  **GitHub Action**: The `release.yml` workflow is triggered in this repository.
-2.  **Versioning**: The `VERSION` file is updated and a new Git tag is created.
-3.  **Packaging**: The workflow triggers builds across the dependent component repositories (gateway, plugins).
-4.  **Artifacts**: Official binaries are compiled, archived, and attached to a new GitHub Release in their respective repositories.
-5.  **Lock Update**: The `production.lock.json` in the runner is eventually updated to point to these new tags.
+4. **Trigger release image build from this repo**
+   - Run:
+     ```bash
+     make release-patch
+     ```
+     or:
+     ```bash
+     gh workflow run release.yml --repo slidebolt/release -f bump=patch
+     ```
+   - The workflow bumps `VERSION`, tags this repo, downloads binaries from lockfile tags, builds/pushes `ghcr.io/slidebolt/slidebolt`, and creates a GitHub Release.
+
+## Critical Checks
+
+Run these checks before triggering `release`:
+
+1. All lockfile components have a release:
+   ```bash
+   gh release view <tag> --repo <org/repo>
+   ```
+2. All required assets exist on those releases:
+   - `gateway_*_linux_amd64.tar.gz`
+   - `launcher_*_linux_amd64.tar.gz`
+   - each enabled plugin binary tarball
+3. `production.lock.json` tags match what was actually released.
+
+## Notes
+
+- A tag existing locally is not enough; it must be pushed and have release assets.
+- If a component release workflow fails, fix that component repo first, retag with a new patch version, update `production.lock.json`, then rerun this release workflow.
