@@ -110,18 +110,25 @@ jobs:
 
       - name: Set GHCR package visibility to public
         run: |
-          set -euo pipefail
+          set +e
           PACKAGE_NAME=slidebolt
           OWNER="${{ github.repository_owner }}"
 
           gh api \
             --method PATCH \
             "/orgs/${OWNER}/packages/container/${PACKAGE_NAME}/visibility" \
-            -f visibility=public \
-          || gh api \
+            -f visibility=public
+          status=$?
+          if [ $status -ne 0 ]; then
+            gh api \
             --method PATCH \
             "/user/packages/container/${PACKAGE_NAME}/visibility" \
             -f visibility=public
+            status=$?
+          fi
+          if [ $status -ne 0 ]; then
+            echo "Warning: could not set GHCR visibility to public; continuing release."
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
