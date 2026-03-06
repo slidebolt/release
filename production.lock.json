@@ -1,0 +1,88 @@
+{
+  "components": [
+    {
+      "id": "gateway",
+      "module": "github.com/slidebolt/gateway",
+      "binary": "gateway",
+      "tag": "v1.7.2",
+      "enabled": true
+    },
+    {
+      "id": "launcher",
+      "module": "github.com/slidebolt/launcher",
+      "binary": "launcher",
+      "tag": "v1.5.4",
+      "enabled": true
+    },
+    {
+      "id": "plugin-system",
+      "module": "github.com/slidebolt/plugin-system",
+      "binary": "plugin-system",
+      "tag": "v1.5.4",
+      "enabled": true
+    },
+    {
+      "id": "plugin-automation",
+      "module": "github.com/slidebolt/plugin-automation",
+      "binary": "plugin-automation",
+      "tag": "v1.5.4",
+      "enabled": true
+    },
+    {
+      "id": "plugin-wiz",
+      "module": "github.com/slidebolt/plugin-wiz",
+      "binary": "plugin-wiz",
+      "tag": "v1.5.4",
+      "enabled": true
+    },
+    {
+      "id": "plugin-zigbee2mqtt",
+      "module": "github.com/slidebolt/plugin-zigbee2mqtt",
+      "binary": "plugin-zigbee2mqtt",
+      "tag": "v1.5.4",
+      "enabled": true
+    },
+    {
+      "id": "plugin-alexa",
+      "module": "github.com/slidebolt/plugin-alexa",
+      "binary": "plugin-alexa",
+      "tag": "v1.5.3",
+      "enabled": true
+    },
+    {
+      "id": "plugin-frigate",
+      "module": "github.com/slidebolt/plugin-frigate",
+      "binary": "plugin-frigate",
+      "tag": "v1.5.4",
+      "enabled": true
+    },
+    {
+      "id": "plugin-esphome",
+      "module": "github.com/slidebolt/plugin-esphome",
+      "binary": "plugin-esphome",
+      "tag": "v1.5.4",
+      "enabled": true
+    },
+    {
+      "id": "plugin-kasa",
+      "module": "github.com/slidebolt/plugin-kasa",
+      "binary": "plugin-kasa",
+      "tag": "v1.5.4",
+      "enabled": true
+    },
+    {
+      "id": "plugin-heos",
+      "module": "github.com/slidebolt/plugin-heos",
+      "binary": "plugin-heos",
+      "tag": "v1.0.1",
+      "enabled": true
+    },
+    {
+      "id": "plugin-androidtv",
+      "module": "github.com/slidebolt/plugin-androidtv",
+      "binary": "plugin-androidtv",
+      "tag": "v1.1.0",
+      "enabled": true
+    }
+  ]
+}

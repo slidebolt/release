@@ -8,6 +8,7 @@ RUN apt-get update && \
 
 WORKDIR /opt/slidebolt
 COPY bin/ .build/bin/
+COPY production.lock.json .
 ARG VERSION=dev
 ENV APP_VERSION=$VERSION
 EXPOSE 39011
