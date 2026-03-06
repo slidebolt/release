@@ -62,31 +62,6 @@ jobs:
           git tag ${{ steps.version.outputs.version }}
           git push origin main --tags
 
-      - name: Download binaries from GitHub Releases
-        run: |
-          mkdir -p bin
-          ARCH=amd64
-
-          jq -c '.components[] | select(.enabled == true)' production.lock.json | while read component; do
-            BINARY=$(echo $component | jq -r '.binary')
-            MODULE=$(echo $component | jq -r '.module')
-            TAG=$(echo $component | jq -r '.tag')
-            REPO=$(echo $MODULE | sed 's|github.com/||')
-            VERSION=$(echo $TAG | tr -d 'v')
-            ASSET="${BINARY}_${VERSION}_linux_${ARCH}.tar.gz"
-
-            echo "Downloading $BINARY $TAG from $REPO..."
-            gh release download "$TAG" \
-              --repo "$REPO" \
-              --pattern "$ASSET" \
-              --output "/tmp/$ASSET"
-
-            tar -xzf "/tmp/$ASSET" -C bin/ "$BINARY"
-            chmod +x "bin/$BINARY"
-          done
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:

@@ -81,7 +81,7 @@
       "id": "plugin-androidtv",
       "module": "github.com/slidebolt/plugin-androidtv",
       "binary": "plugin-androidtv",
-      "tag": "v1.1.0",
+      "tag": "v1.0.6",
       "enabled": true
     }
   ]
