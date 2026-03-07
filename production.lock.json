@@ -83,6 +83,13 @@
       "binary": "plugin-androidtv",
       "tag": "v1.0.6",
       "enabled": true
+    },
+    {
+      "id": "plugin-amcrest",
+      "module": "github.com/slidebolt/plugin-amcrest",
+      "binary": "plugin-amcrest",
+      "tag": "v0.1.0",
+      "enabled": true
     }
   ]
 }
