@@ -27,13 +27,25 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch production.lock.json from main
+      - name: Resolve latest component versions
+        id: manifest
         run: |
-          curl -fsSL \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.raw+json" \
-            "https://api.github.com/repos/slidebolt/slidebolt/contents/cmd/runner/templates/prod/production.lock.json?ref=main" \
-            -o production.lock.json
+          MANIFEST=$(jq -c '.[]' components.json | while read component; do
+            ID=$(echo "$component" | jq -r '.id')
+            TAG=$(gh release view --repo slidebolt/$ID --json tagName -q .tagName 2>/dev/null || echo "")
+            if [ -z "$TAG" ]; then
+              echo "ERROR: could not resolve latest release for $ID" >&2
+              exit 1
+            fi
+            echo "$component" | jq --arg tag "$TAG" '. + {tag: $tag}'
+          done | jq -s '.')
+
+          echo "$MANIFEST" > manifest.json
+          echo "manifest<<EOF" >> $GITHUB_OUTPUT
+          echo "$MANIFEST" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Bump version
         id: version
@@ -53,7 +65,7 @@ jobs:
           echo "$NEW" > VERSION
           echo "version=$NEW" >> $GITHUB_OUTPUT
 
-      - name: Commit bumped version
+      - name: Commit and tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -61,6 +73,14 @@ jobs:
           git commit -m "release: ${{ steps.version.outputs.version }}"
           git tag ${{ steps.version.outputs.version }}
           git push origin main --tags
+
+      - name: Build component version labels
+        id: labels
+        run: |
+          LABELS=$(jq -r '.[] | "org.slidebolt.\(.id)=\(.tag)"' manifest.json | tr '\n' '\n')
+          echo "labels<<EOF" >> $GITHUB_OUTPUT
+          echo "$LABELS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -82,6 +102,7 @@ jobs:
           labels: |
             org.opencontainers.image.version=${{ steps.version.outputs.version }}
             org.opencontainers.image.source=https://github.com/slidebolt/release
+            ${{ steps.labels.outputs.labels }}
 
       - name: Set GHCR package visibility to public
         run: |
@@ -109,10 +130,13 @@ jobs:
 
       - name: Create GitHub Release
         run: |
+          NOTES=$(jq -r '.[] | "- **\(.id)**: \(.tag)"' manifest.json)
           gh release create ${{ steps.version.outputs.version }} \
             --repo slidebolt/release \
             --title "${{ steps.version.outputs.version }}" \
             --latest \
-            --notes "Built from production.lock.json on main at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            --notes "## Components
+
+          $NOTES"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

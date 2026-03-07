@@ -1,11 +1,11 @@
 FROM golang:1.23-bookworm AS builder
 WORKDIR /build
 
-COPY production.lock.json .
+COPY manifest.json .
 RUN apt-get update && apt-get install -y jq
 
 RUN mkdir -p /out/bin && \
-    jq -c '.components[] | select(.enabled == true)' production.lock.json | while read component; do \
+    jq -c '.[]' manifest.json | while read component; do \
       MODULE=$(echo $component | jq -r '.module'); \
       TAG=$(echo $component | jq -r '.tag'); \
       BINARY=$(echo $component | jq -r '.binary'); \
@@ -20,7 +20,7 @@ RUN apt-get update && \
 
 WORKDIR /opt/slidebolt
 COPY --from=builder /out/bin/ .build/bin/
-COPY production.lock.json .
+COPY manifest.json .
 ARG VERSION=dev
 ENV APP_VERSION=$VERSION
 EXPOSE 39011

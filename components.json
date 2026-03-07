@@ -1,0 +1,15 @@
+[
+  { "id": "gateway",            "module": "github.com/slidebolt/gateway",            "binary": "gateway"            },
+  { "id": "launcher",           "module": "github.com/slidebolt/launcher",           "binary": "launcher"           },
+  { "id": "plugin-system",      "module": "github.com/slidebolt/plugin-system",      "binary": "plugin-system"      },
+  { "id": "plugin-automation",  "module": "github.com/slidebolt/plugin-automation",  "binary": "plugin-automation"  },
+  { "id": "plugin-esphome",     "module": "github.com/slidebolt/plugin-esphome",     "binary": "plugin-esphome"     },
+  { "id": "plugin-wiz",         "module": "github.com/slidebolt/plugin-wiz",         "binary": "plugin-wiz"         },
+  { "id": "plugin-zigbee2mqtt", "module": "github.com/slidebolt/plugin-zigbee2mqtt", "binary": "plugin-zigbee2mqtt" },
+  { "id": "plugin-alexa",       "module": "github.com/slidebolt/plugin-alexa",       "binary": "plugin-alexa"       },
+  { "id": "plugin-frigate",     "module": "github.com/slidebolt/plugin-frigate",     "binary": "plugin-frigate"     },
+  { "id": "plugin-kasa",        "module": "github.com/slidebolt/plugin-kasa",        "binary": "plugin-kasa"        },
+  { "id": "plugin-heos",        "module": "github.com/slidebolt/plugin-heos",        "binary": "plugin-heos"        },
+  { "id": "plugin-androidtv",   "module": "github.com/slidebolt/plugin-androidtv",   "binary": "plugin-androidtv"   },
+  { "id": "plugin-amcrest",     "module": "github.com/slidebolt/plugin-amcrest",     "binary": "plugin-amcrest"     }
+]
