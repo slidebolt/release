@@ -1,71 +1,44 @@
 # Slidebolt Release Process
 
-This repository orchestrates the official release process for the entire Slidebolt ecosystem.
+## How it works
 
-## Component Releases (plugins, gateway, launcher)
+There is no lock file. The release workflow resolves the latest published GitHub Release
+for each component at build time. Whatever is latest when you run `make release-patch`
+is what goes into the image.
 
-Releases are triggered via GitHub Actions `workflow_dispatch` — **do not create tags manually**.
+The docker image tag (`v2.5.0`) is the blessed release. The exact component versions
+that went into it are recorded as OCI image labels and in the GitHub Release notes.
+
+## Adding or removing a component
+
+Edit `components.json` in this repo. No versions — just the component list.
+
+## Releasing
 
 ```bash
+# Release one or more components first (if they have new changes)
 gh workflow run release.yml --repo slidebolt/<repo> -f bump=patch
-# or: minor, major
-```
 
-The workflow automatically:
-1. Fetches all tags to determine the current version
-2. Runs `go get github.com/slidebolt/sdk-*@latest && go mod tidy` to pick up latest internal deps
-3. Bumps the version, commits the updated `go.mod`/`go.sum`, tags, and pushes
-4. Builds and publishes `{binary}_{version}_linux_{amd64,arm64}.tar.gz` assets
-
-## SDK Base Package Releases (sdk-types, sdk-runner, sdk-entities)
-
-These have no internal SDK deps. Release by pushing a tag manually:
-
-```bash
-cd /home/gavin/work/sb/work/raw/<sdk-repo>
-git tag v1.x.x
-git push origin main --tags
-```
-
-Release these before triggering component releases if they have new changes.
-
-## Main Release (Docker Image)
-
-Once all required components are released and `production.lock.json` is updated:
-
-```bash
+# Then build and ship the docker image
 cd /home/gavin/work/sb/release
 make release-patch    # or minor, major
 ```
 
-The workflow fetches `production.lock.json` from `slidebolt/slidebolt` main, downloads all
-component binaries, builds and pushes `ghcr.io/slidebolt/slidebolt:latest`.
+That's it. The workflow resolves latest versions, builds, pushes to GHCR, and
+writes a release note listing every component version included.
 
-## Updating the Lock File
-
-After releasing components, update `slidebolt-runner/cmd/runner/templates/prod/production.lock.json`
-and push to main before triggering the main release:
+## Inspecting what's in a running image
 
 ```bash
-cd /home/gavin/work/sb/slidebolt-runner
-# Edit: cmd/runner/templates/prod/production.lock.json
-git add cmd/runner/templates/prod/production.lock.json
-git commit -m "chore: update component versions"
-git push origin main
+docker inspect ghcr.io/slidebolt/slidebolt:latest \
+  --format '{{json .Config.Labels}}' | jq 'to_entries | map(select(.key | startswith("org.slidebolt."))) | from_entries'
 ```
 
-## Critical Checks Before Main Release
+## SDK base packages (sdk-types, sdk-runner, sdk-entities)
 
-Verify release assets exist for every component in the lock file:
+Release by triggering their workflow. Component releases will pick up the new
+SDK version automatically on next release (via `go get @latest` in their CI).
 
 ```bash
-gh release view <tag> --repo slidebolt/<repo>
+gh workflow run release.yml --repo slidebolt/sdk-types -f bump=patch
 ```
-
-Required asset format: `{binary}_{version}_linux_amd64.tar.gz`
-
-## Notes
-
-- A tag existing locally is not enough; it must be pushed and have release assets.
-- If a component release workflow fails, re-run via `gh workflow run release.yml --repo slidebolt/<repo> -f bump=patch`.
-- `production.lock.json` must be pushed to `slidebolt/slidebolt` main before triggering the main release workflow.
