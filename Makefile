@@ -1,4 +1,4 @@
-.PHONY: release-patch release-minor release-major release-all-patch release-all-minor release-all-major
+.PHONY: release-patch release-minor release-major release-all-patch release-all-minor release-all-major feature-start feature-finish
 
 release-patch:
 	gh workflow run release.yml --repo slidebolt/release -f bump=patch
@@ -17,3 +17,9 @@ release-all-minor:
 
 release-all-major:
 	./scripts/release-all.sh major
+
+feature-start:
+	./scripts/feature-start.sh $(BRANCH)
+
+feature-finish:
+	./scripts/feature-finish.sh $(BRANCH)
