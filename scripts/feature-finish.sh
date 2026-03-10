@@ -12,7 +12,7 @@ fi
 
 COMPONENTS=$(jq -r '.[].id' components.json)
 CORE="gateway launcher"
-SDKS="sdk-types sdk-entities sdk-runner"
+SDKS="sdk-types sdk-entities registry sdk-runner"
 
 # Build list of all local directories
 DIRS=""

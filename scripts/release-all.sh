@@ -35,9 +35,11 @@ release_and_wait() {
 }
 
 # --- Phase 1: SDKs (Sequential) ---
-# Order matters: types -> entities -> runner
+# Order matters: types -> entities -> registry -> runner
+# registry depends on sdk-types; sdk-runner depends on sdk-entities and registry
 release_and_wait "sdk-types"
 release_and_wait "sdk-entities"
+release_and_wait "registry"
 release_and_wait "sdk-runner"
 
 # --- Phase 2: Components (Parallel) ---
@@ -65,7 +67,7 @@ make "release-$BUMP"
 # --- Phase 4: Post-Release Cleanup (Local Sync) ---
 echo ">>> Syncing local repositories with remote updates..."
 # List of all directories to pull
-DIRS="../work/raw/sdk-types ../work/raw/sdk-entities ../work/raw/sdk-runner"
+DIRS="../work/raw/sdk-types ../work/raw/sdk-entities ../work/raw/registry ../work/raw/sdk-runner"
 for id in $COMPONENTS $CORE; do
   DIRS="$DIRS ../work/raw/$id"
 done
