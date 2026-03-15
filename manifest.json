@@ -3,78 +3,78 @@
     "id": "gateway",
     "module": "github.com/slidebolt/gateway",
     "binary": "gateway",
-    "tag": "v1.20.2"
+    "tag": "v1.20.4"
   },
   {
     "id": "launcher",
     "module": "github.com/slidebolt/launcher",
     "binary": "launcher",
-    "tag": "v1.20.0"
+    "tag": "v1.20.1"
   },
   {
     "id": "plugin-system",
     "module": "github.com/slidebolt/plugin-system",
     "binary": "plugin-system",
-    "tag": "v1.20.2"
+    "tag": "v1.20.4"
   },
   {
     "id": "plugin-automation",
     "module": "github.com/slidebolt/plugin-automation",
     "binary": "plugin-automation",
-    "tag": "v1.20.3"
+    "tag": "v1.20.6"
   },
   {
     "id": "plugin-esphome",
     "module": "github.com/slidebolt/plugin-esphome",
     "binary": "plugin-esphome",
-    "tag": "v1.20.1"
+    "tag": "v1.20.4"
   },
   {
     "id": "plugin-wiz",
     "module": "github.com/slidebolt/plugin-wiz",
     "binary": "plugin-wiz",
-    "tag": "v1.20.2"
+    "tag": "v1.20.5"
   },
   {
     "id": "plugin-zigbee2mqtt",
     "module": "github.com/slidebolt/plugin-zigbee2mqtt",
     "binary": "plugin-zigbee2mqtt",
-    "tag": "v1.20.2"
+    "tag": "v1.20.5"
   },
   {
     "id": "plugin-alexa",
     "module": "github.com/slidebolt/plugin-alexa",
     "binary": "plugin-alexa",
-    "tag": "v1.20.2"
+    "tag": "v1.20.5"
   },
   {
     "id": "plugin-frigate",
     "module": "github.com/slidebolt/plugin-frigate",
     "binary": "plugin-frigate",
-    "tag": "v1.20.3"
+    "tag": "v1.20.5"
   },
   {
     "id": "plugin-kasa",
     "module": "github.com/slidebolt/plugin-kasa",
     "binary": "plugin-kasa",
-    "tag": "v1.20.2"
+    "tag": "v1.20.5"
   },
   {
     "id": "plugin-heos",
     "module": "github.com/slidebolt/plugin-heos",
     "binary": "plugin-heos",
-    "tag": "v1.20.2"
+    "tag": "v1.20.3"
   },
   {
     "id": "plugin-androidtv",
     "module": "github.com/slidebolt/plugin-androidtv",
     "binary": "plugin-androidtv",
-    "tag": "v1.20.2"
+    "tag": "v1.20.4"
   },
   {
     "id": "plugin-amcrest",
     "module": "github.com/slidebolt/plugin-amcrest",
     "binary": "plugin-amcrest",
-    "tag": "v1.20.2"
+    "tag": "v1.20.4"
   }
 ]
