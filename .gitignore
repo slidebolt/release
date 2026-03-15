@@ -3,3 +3,5 @@ docker-compose.release.yml
 docker-compose.portainer.yml
 
 scripts/.release_guard
+
+**/.env.local
