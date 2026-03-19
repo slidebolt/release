@@ -16,8 +16,8 @@ image, smoke-tests that image, and publishes it to GHCR.
 
 The workflow publishes:
 
-- `ghcr.io/slidebolt/slidebolt:<tag>`
-- `ghcr.io/slidebolt/slidebolt:latest` on `main`
+- `ghcr.io/slidebolt/release:<tag>`
+- `ghcr.io/slidebolt/release:latest`
 
 ## Included Binaries
 

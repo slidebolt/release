@@ -36,18 +36,18 @@ jobs:
             version_tag="${GITHUB_REF_NAME}"
             {
               echo "tags<<EOF"
-              echo "ghcr.io/slidebolt/slidebolt:${version_tag}"
-              echo "ghcr.io/slidebolt/slidebolt:latest"
+              echo "ghcr.io/slidebolt/release:${version_tag}"
+              echo "ghcr.io/slidebolt/release:latest"
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
           fi
 
       - name: Build Image
-        run: docker build -t ghcr.io/slidebolt/slidebolt:ci .
+        run: docker build -t ghcr.io/slidebolt/release:ci .
 
       - name: Smoke Test Image
         run: |
-          docker run --rm --entrypoint /bin/sh ghcr.io/slidebolt/slidebolt:ci -lc '
+          docker run --rm --entrypoint /bin/sh ghcr.io/slidebolt/release:ci -lc '
             test -x /app/.bin/sb-manager &&
             test -x /app/.bin/sb-messenger &&
             test -x /app/.bin/sb-storage &&
@@ -60,7 +60,7 @@ jobs:
         run: |
           while IFS= read -r tag; do
             [[ -n "${tag}" ]] || continue
-            docker tag ghcr.io/slidebolt/slidebolt:ci "${tag}"
+            docker tag ghcr.io/slidebolt/release:ci "${tag}"
           done <<< "${{ steps.meta.outputs.tags }}"
 
       - name: Push Image
