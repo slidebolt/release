@@ -9,16 +9,19 @@ WORKDIR /app
 # Binaries are fetched by fetch-binaries.sh into dist/
 COPY dist/ /app/.bin/
 COPY dist-manager/sb-manager /usr/local/bin/sb-manager
+COPY dist-cli/sb /usr/local/bin/sb
 
 RUN chmod +x /app/.bin/* \
     && chmod +x /usr/local/bin/sb-manager \
+    && chmod +x /usr/local/bin/sb \
     && test ! -e /app/.bin/sb-manager \
+    && test ! -e /app/.bin/sb \
     && test -x /usr/local/bin/sb-manager \
+    && test -x /usr/local/bin/sb \
     && test -x /app/.bin/sb-messenger \
     && test -x /app/.bin/sb-storage \
     && test -x /app/.bin/sb-api \
-    && test -x /app/.bin/sb-logging \
-    && test -x /app/.bin/sb
+    && test -x /app/.bin/sb-logging
 
 ENV PATH="/app/.bin:${PATH}"
 

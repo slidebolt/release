@@ -4,11 +4,12 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DIST_DIR="${ROOT_DIR}/dist"
 MANAGER_DIR="${ROOT_DIR}/dist-manager"
+CLI_DIR="${ROOT_DIR}/dist-cli"
 
 source "${ROOT_DIR}/versions.env"
 
-rm -rf "${DIST_DIR}" "${MANAGER_DIR}"
-mkdir -p "${DIST_DIR}" "${MANAGER_DIR}"
+rm -rf "${DIST_DIR}" "${MANAGER_DIR}" "${CLI_DIR}"
+mkdir -p "${DIST_DIR}" "${MANAGER_DIR}" "${CLI_DIR}"
 
 fetch_binary() {
   local repo="$1"
@@ -33,6 +34,16 @@ fetch_manager() {
   chmod +x "${out}"
 }
 
+fetch_cli() {
+  local version="$1"
+  local out="${CLI_DIR}/sb"
+  local url="https://github.com/slidebolt/sb-cli/releases/download/${version}/sb_linux_amd64"
+
+  echo "Fetching sb-cli ${version} -> dist-cli/sb"
+  curl -fsSL "${url}" -o "${out}"
+  chmod +x "${out}"
+}
+
 # Core Services
 fetch_manager "${SB_MANAGER_VERSION}"
 fetch_binary "sb-messenger" "${SB_MESSENGER_VERSION}" "sb-messenger_linux_amd64" "sb-messenger"
@@ -41,7 +52,7 @@ fetch_binary "sb-api" "${SB_API_VERSION}" "sb-api_linux_amd64" "sb-api"
 fetch_binary "sb-script" "${SB_SCRIPT_VERSION}" "sb-script_linux_amd64" "sb-script"
 fetch_binary "sb-virtual" "${SB_VIRTUAL_VERSION}" "sb-virtual_linux_amd64" "sb-virtual"
 fetch_binary "sb-logging" "${SB_LOGGING_VERSION}" "sb-logging_linux_amd64" "sb-logging"
-fetch_binary "sb-cli" "${SB_CLI_VERSION}" "sb_linux_amd64" "sb"
+fetch_cli "${SB_CLI_VERSION}"
 
 # Plugins
 fetch_binary "plugin-alexa" "${PLUGIN_ALEXA_VERSION}" "plugin-alexa_linux_amd64" "plugin-alexa"

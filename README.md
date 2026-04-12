@@ -23,6 +23,8 @@ The workflow publishes:
 
 - `sb-manager` lives at `/usr/local/bin/sb-manager`
 - it is the orchestrator entrypoint and is intentionally **not** copied into `/app/.bin`
+- `sb` lives at `/usr/local/bin/sb`
+- it is the CLI and is intentionally **not** copied into `/app/.bin`
 
 ## Managed Binaries
 
