@@ -19,9 +19,13 @@ The workflow publishes:
 - `ghcr.io/slidebolt/release:<tag>`
 - `ghcr.io/slidebolt/release:latest`
 
-## Included Binaries
+## Bootstrap Binary
 
-- `sb-manager`
+- `sb-manager` lives at `/usr/local/bin/sb-manager`
+- it is the orchestrator entrypoint and is intentionally **not** copied into `/app/.bin`
+
+## Managed Binaries
+
 - `sb-messenger`
 - `sb-storage`
 - `sb-api`

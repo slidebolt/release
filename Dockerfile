@@ -8,9 +8,12 @@ WORKDIR /app
 
 # Binaries are fetched by fetch-binaries.sh into dist/
 COPY dist/ /app/.bin/
+COPY dist-manager/sb-manager /usr/local/bin/sb-manager
 
 RUN chmod +x /app/.bin/* \
-    && test -x /app/.bin/sb-manager \
+    && chmod +x /usr/local/bin/sb-manager \
+    && test ! -e /app/.bin/sb-manager \
+    && test -x /usr/local/bin/sb-manager \
     && test -x /app/.bin/sb-messenger \
     && test -x /app/.bin/sb-storage \
     && test -x /app/.bin/sb-api \
@@ -20,4 +23,4 @@ RUN chmod +x /app/.bin/* \
 ENV PATH="/app/.bin:${PATH}"
 
 # Default to starting the manager, which coordinates other processes
-CMD ["/app/.bin/sb-manager"]
+CMD ["/usr/local/bin/sb-manager", "--bin-dir", "/app/.bin"]

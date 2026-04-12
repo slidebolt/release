@@ -3,10 +3,12 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DIST_DIR="${ROOT_DIR}/dist"
+MANAGER_DIR="${ROOT_DIR}/dist-manager"
 
 source "${ROOT_DIR}/versions.env"
 
-mkdir -p "${DIST_DIR}"
+rm -rf "${DIST_DIR}" "${MANAGER_DIR}"
+mkdir -p "${DIST_DIR}" "${MANAGER_DIR}"
 
 fetch_binary() {
   local repo="$1"
@@ -21,8 +23,18 @@ fetch_binary() {
   chmod +x "${out}"
 }
 
+fetch_manager() {
+  local version="$1"
+  local out="${MANAGER_DIR}/sb-manager"
+  local url="https://github.com/slidebolt/sb-manager/releases/download/${version}/sb-manager_linux_amd64"
+
+  echo "Fetching sb-manager ${version} -> dist-manager/sb-manager"
+  curl -fsSL "${url}" -o "${out}"
+  chmod +x "${out}"
+}
+
 # Core Services
-fetch_binary "sb-manager" "${SB_MANAGER_VERSION}" "sb-manager_linux_amd64" "sb-manager"
+fetch_manager "${SB_MANAGER_VERSION}"
 fetch_binary "sb-messenger" "${SB_MESSENGER_VERSION}" "sb-messenger_linux_amd64" "sb-messenger"
 fetch_binary "sb-storage" "${SB_STORAGE_VERSION}" "sb-storage_linux_amd64" "sb-storage"
 fetch_binary "sb-api" "${SB_API_VERSION}" "sb-api_linux_amd64" "sb-api"

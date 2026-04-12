@@ -48,7 +48,8 @@ jobs:
       - name: Smoke Test Image
         run: |
           docker run --rm --entrypoint /bin/sh ghcr.io/slidebolt/release:ci -lc '
-            test -x /app/.bin/sb-manager &&
+            test ! -e /app/.bin/sb-manager &&
+            test -x /usr/local/bin/sb-manager &&
             test -x /app/.bin/sb-messenger &&
             test -x /app/.bin/sb-storage &&
             test -x /app/.bin/sb-api &&
