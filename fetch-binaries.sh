@@ -52,6 +52,9 @@ fetch_binary "sb-api" "${SB_API_VERSION}" "sb-api_linux_amd64" "sb-api"
 fetch_binary "sb-script" "${SB_SCRIPT_VERSION}" "sb-script_linux_amd64" "sb-script"
 fetch_binary "sb-virtual" "${SB_VIRTUAL_VERSION}" "sb-virtual_linux_amd64" "sb-virtual"
 fetch_binary "sb-logging" "${SB_LOGGING_VERSION}" "sb-logging_linux_amd64" "sb-logging"
+fetch_binary "sb-media" "${SB_MEDIA_VERSION}" "sb-media_linux_amd64" "sb-media"
+fetch_binary "sb-speech" "${SB_SPEECH_VERSION}" "sb-speech_linux_amd64" "sb-speech"
+fetch_binary "asterisk-host" "${ASTERISK_HOST_VERSION}" "asterisk-host_linux_amd64" "asterisk-host"
 fetch_cli "${SB_CLI_VERSION}"
 
 # Plugins
@@ -66,6 +69,7 @@ fetch_binary "plugin-esphome" "${PLUGIN_ESPHOME_VERSION}" "plugin-esphome_linux_
 fetch_binary "plugin-frigate" "${PLUGIN_FRIGATE_VERSION}" "plugin-frigate_linux_amd64" "plugin-frigate"
 fetch_binary "plugin-homeassistant" "${PLUGIN_HOMEASSISTANT_VERSION}" "plugin-homeassistant_linux_amd64" "plugin-homeassistant"
 fetch_binary "plugin-kasa" "${PLUGIN_KASA_VERSION}" "plugin-kasa_linux_amd64" "plugin-kasa"
+fetch_binary "plugin-opencode" "${PLUGIN_OPENCODE_VERSION}" "plugin-opencode_linux_amd64" "plugin-opencode"
 fetch_binary "plugin-system" "${PLUGIN_SYSTEM_VERSION}" "plugin-system_linux_amd64" "plugin-system"
 fetch_binary "plugin-virtual" "${PLUGIN_VIRTUAL_VERSION}" "plugin-virtual_linux_amd64" "plugin-virtual"
 fetch_binary "plugin-wiz" "${PLUGIN_WIZ_VERSION}" "plugin-wiz_linux_amd64" "plugin-wiz"
