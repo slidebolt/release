@@ -13,6 +13,7 @@ use (
 	./plugin-frigate
 	./plugin-homeassistant
 	./plugin-kasa
+	./plugin-intent
 	./plugin-opencode
 	./plugin-system
 	./plugin-virtual

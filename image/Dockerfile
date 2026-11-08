@@ -23,6 +23,7 @@ COPY sb-media/             sb-media/
 COPY asterisk-host/        asterisk-host/
 COPY sb-speech-sdk/        sb-speech-sdk/
 COPY sb-speech/            sb-speech/
+COPY plugin-intent/       plugin-intent/
 COPY plugin-opencode/      plugin-opencode/
 COPY sb-storage/           sb-storage/
 COPY sb-api/               sb-api/
@@ -57,6 +58,7 @@ RUN cd sb-api            && go build -o /out/.bin/sb-api            ./cmd/sb-api
 RUN cd sb-media          && go build -o /out/.bin/sb-media          ./cmd/sb-media
 RUN cd asterisk-host     && go build -o /out/.bin/asterisk-host     ./cmd/asterisk-host
 RUN cd sb-speech         && go build -o /out/.bin/sb-speech         ./cmd/sb-speech
+RUN cd plugin-intent    && go build -o /out/.bin/plugin-intent    ./cmd/plugin-intent
 RUN cd plugin-opencode   && go build -o /out/.bin/plugin-opencode   ./cmd/plugin-opencode
 RUN cd sb-script         && go build -o /out/.bin/sb-script         ./cmd/sb-script
 RUN cd sb-virtual        && go build -o /out/.bin/sb-virtual        ./cmd/sb-virtual

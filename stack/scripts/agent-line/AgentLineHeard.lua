@@ -1,4 +1,5 @@
--- Every new utterance on the agent line goes to the phone agent. One session per
+-- Every new utterance on the agent line goes to the phone listener: a known phrase
+-- presses its intent at once, anything else goes on to the phone agent. One session per
 -- call, so the agent remembers earlier requests in the same call.
 local last, session = 0, nil
 Automation("AgentLineHeard", {
@@ -15,6 +16,6 @@ Automation("AgentLineHeard", {
   session = session or ("phone-" .. os.time())
   ctx.decision("heard", { text = s.text, session = session })
   ctx.send({ key = "plugin-asterisk.call_agent.call" }, "sip_say", { text = "One moment." })
-  ctx.send(ctx.queryOne("plugin-opencode.agent_phone.prompt"), "agent_prompt",
+  ctx.send(ctx.queryOne("plugin-intent.listener_phone.prompt"), "agent_prompt",
            { text = s.text, session = session })
 end)

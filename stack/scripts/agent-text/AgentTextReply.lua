@@ -1,8 +1,8 @@
--- The text agent's answer goes back, as a text, to the extension it came from. The
+-- The text listener's answer goes back, as a text, to the extension it came from. The
 -- session names that extension.
 local last = nil
 Automation("AgentTextReply", {
-  trigger = Entity("plugin-opencode.agent_text.prompt"),
+  trigger = Entity("plugin-intent.listener_text.prompt"),
   targets = None(),
 }, function(ctx)
   local s = ctx.trigger.entity.state

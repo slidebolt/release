@@ -1,7 +1,7 @@
--- The phone agent's answer is spoken on the agent line.
+-- The phone listener's answer is spoken on the agent line.
 local last = 0
 Automation("AgentLineReply", {
-  trigger = Entity("plugin-opencode.agent_phone.prompt"),
+  trigger = Entity("plugin-intent.listener_phone.prompt"),
   targets = None(),
 }, function(ctx)
   local s = ctx.trigger.entity.state

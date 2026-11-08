@@ -1,4 +1,5 @@
--- Every text message to the agent line goes to the text agent. One session per
+-- Every text message to the agent line goes to the text listener: a known phrase
+-- presses its intent at once, anything else goes on to the text agent. One session per
 -- extension, so the agent remembers earlier texts from the same phone.
 local lastAt = nil
 Automation("AgentTextHeard", {
@@ -10,6 +11,6 @@ Automation("AgentTextHeard", {
   lastAt = s.at
   local session = "text-" .. s.from
   ctx.decision("texted", { from = s.from, session = session })
-  ctx.send(ctx.queryOne("plugin-opencode.agent_text.prompt"), "agent_prompt",
+  ctx.send(ctx.queryOne("plugin-intent.listener_text.prompt"), "agent_prompt",
            { text = s.text, session = session })
 end)
