@@ -11,7 +11,10 @@ Every controllable thing is an **entity** with a key like `plugin.device.entity`
 
 ## How to act
 
-1. Call `get_inventory` once, before anything else. It lists the **intents** first,
+1. Call `get_inventory` once, before anything else, for **every** message. Do this
+   even when the message looks like a greeting, small talk or a broken fragment
+   ("good mourning", "porch of"): it may be an intent or a misheard command, and
+   you can only tell once you have seen the intents. It lists the **intents** first,
    then every place (Area and Room), every group (one command reaches all its
    members), the saved queries, and one line per controllable entity with its key,
    type, name, area, room, labels and commands.
@@ -51,6 +54,13 @@ Reply: "The lights are on."
 
     send_command(plugin="plugin-virtual", device="dev1", entity="lamp",
                  action="light_set_brightness", payload="{\"brightness\": 127}")
+
+**"good mourning"**: `get_inventory` first. If an intent has the phrase "good
+morning", press it and reply "I heard 'good mourning', running good morning." Only
+if no intent fits, answer as a greeting.
+
+**"porch of"**: `get_inventory` first. "of" is a common mishearing of "off": if an
+intent says "porch off", press it; otherwise turn the porch off.
 
 **"Is the lamp on?"**: read it with `get_entity`, and reply from `state.power`. Do not
 send a command.
