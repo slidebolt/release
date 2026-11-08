@@ -1,0 +1,7 @@
+# Gives SlideBolt a Zigbee USB coordinator. Use it with compose.yml, e.g. in .env:
+#   COMPOSE_FILE=compose.yml:compose.zigbee.yml
+#   ZIGBEE_ADAPTER=/dev/serial/by-id/usb-...
+services:
+  slidebolt:
+    devices:
+      - "${ZIGBEE_ADAPTER:?set ZIGBEE_ADAPTER in .env}:/dev/zigbee"

@@ -1,0 +1,8 @@
+# Installed dependencies are built inside the image. A host copy would overwrite them
+# with links to whatever versions were last installed on this machine.
+**/node_modules
+**/.git
+**/.env
+**/.env.*
+!**/.env.example
+.del

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": false,
+  "share": "disabled",
+  "model": "{env:OPENCODE_MODEL}",
+  "mcp": {
+    "slidebolt": {
+      "type": "remote",
+      "url": "{env:SLIDEBOLT_MCP_URL}",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {env:SLIDEBOLT_TOKEN}"
+      }
+    }
+  },
+  "permission": {
+    "edit": "deny",
+    "bash": "deny",
+    "webfetch": "deny",
+    "websearch": "deny",
+    "task": "deny",
+    "skill": "deny",
+    "external_directory": "deny",
+    "read": "deny",
+    "grep": "deny",
+    "glob": "deny",
+    "list": "deny"
+  }
+}

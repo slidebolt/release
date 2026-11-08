@@ -1,0 +1,81 @@
+# SlideBolt. Put a filled-in .env next to this file (see .env.example), then:
+#   docker compose up -d
+# Open the UI at http://<this machine>:49101 and follow the setup page.
+name: slidebolt
+
+services:
+  slidebolt:
+    image: ghcr.io/slidebolt/release:${SLIDEBOLT_VERSION:-latest}
+    restart: unless-stopped
+    # Host network: plugins discover devices on the LAN (mDNS, broadcast).
+    network_mode: host
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      NODE_ENV: production
+      TZ: ${TZ:-UTC}
+      # The UI's API. nginx in the image expects it on 40001.
+      PORT: "40001"
+      DATABASE_URL: postgresql://slidebolt:${UI_DB_PASSWORD:?set UI_DB_PASSWORD in .env}@127.0.0.1:${UI_DB_PORT:-5438}/slidebolt
+      SESSION_SECRET: ${UI_SESSION_SECRET:?set UI_SESSION_SECRET in .env}
+      CORE_API_URL: http://127.0.0.1:${SB_API_PORT:-29011}
+      ZIGBEE_ADAPTER: /dev/zigbee
+    volumes:
+      - ${SB_DATA_DIR:-./data}:/app/.data
+    depends_on:
+      ui-db:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # Accounts and settings for the UI. Reachable only from this machine.
+  ui-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: slidebolt
+      POSTGRES_DB: slidebolt
+      POSTGRES_PASSWORD: ${UI_DB_PASSWORD:?set UI_DB_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${UI_DB_PORT:-5438}:5432"
+    volumes:
+      - ui-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U slidebolt -d slidebolt"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # The OpenCode agent behind voice, phone and text requests. Optional: runs with
+  # COMPOSE_PROFILES=agent. Its only tool is SlideBolt's MCP server, reached with
+  # OPENCODE_SLIDEBOLT_TOKEN; it listens on 127.0.0.1 only.
+  opencode:
+    profiles: [agent]
+    build: ./opencode
+    image: slidebolt-opencode:local
+    restart: unless-stopped
+    network_mode: host
+    # On the host network, so listen on loopback only.
+    entrypoint: ["opencode", "serve", "--hostname", "127.0.0.1", "--port", "4096"]
+    environment:
+      OPENCODE_SERVER_PASSWORD: ${OPENCODE_HOST_PASSWORD:-}
+      OPENCODE_API_KEY: ${OPENCODE_API_KEY:-}
+      OPENCODE_MODEL: ${OPENCODE_MODEL:-opencode-go/deepseek-v4.1-flash}
+      SLIDEBOLT_MCP_URL: http://127.0.0.1:${SB_API_PORT:-29011}/mcp
+      SLIDEBOLT_TOKEN: ${OPENCODE_SLIDEBOLT_TOKEN:-}
+    volumes:
+      # Conversation history: prompts, tool calls and replies.
+      - opencode-data:/data/opencode
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+volumes:
+  ui-db-data:
+  opencode-data:
