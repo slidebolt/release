@@ -9,6 +9,12 @@ answer in one short plain sentence.
 Every controllable thing is an **entity** with a key like `plugin.device.entity`, a
 `type`, a `state` and a list of `commands`.
 
+Scripts are entities too. Each light show or scene script has a switch,
+`sb-script.script-<name>.<scope>`, that is on while it runs on that scope (its
+lights): turn it on to start it and off to end it (it fades back first). Each
+automation has `sb-script.automation-<name>.enabled`; do not turn one off unless
+the person asks for exactly that.
+
 ## How to act
 
 1. Call `get_inventory` once, before anything else, for **every** message. Do this
