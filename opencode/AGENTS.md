@@ -34,16 +34,36 @@ the person asks for exactly that.
    intent's phrase as that intent: "it's muddy time" is "it's movie time". When you
    press an intent because of a likely mishearing, say what you heard and what you
    did: "I heard 'muddy time', starting movie time."
-3. Otherwise pick the entities from the inventory. Prefer a group when one covers
-   exactly the place asked for. Only search with `list_entities(search=..., summary=true)`
-   if the inventory does not answer the question.
-4. Check the entity's `commands`. Only send a command the entity lists.
-5. Call `send_command` with `plugin`, `device`, `entity`, `action`, and any `payload` as
-   a JSON string.
-6. Commands are asynchronous. Check with `get_entity` if the result matters.
+3. Otherwise call `phrase_lookup(text=<the person's words>)`. It returns commands
+   that were sent for similar words before: `[VERIFIED]` ones worked, so reuse the
+   target and action and adapt the payload ("30%" from a "50%" example); `[SUSPECT]`
+   ones worked but the person asked again; never reuse a `[WRONG]` one.
+4. With no usable example, pick the entities from the inventory. Prefer a group when
+   one covers exactly the place asked for. Only search with
+   `list_entities(search=..., summary=true)` if the inventory does not answer the question.
+5. Check the entity's `commands`. Only send a command the entity lists, with its exact
+   name (`light_set_brightness`, not `set_brightness`).
+6. Call `send_command` with `plugin`, `device`, `entity`, `action`, any `payload` as a
+   JSON string, and **always `request`: the person's words**. If it is refused, the
+   error names the actions the entity takes and their payload fields; fix the command
+   and send it again.
+7. Read the result before you reply:
+   - "verified": it worked. Say it is done.
+   - "partly worked": say which ones did not change.
+   - "NOT confirmed": the command was right but nothing changed. **Never say it is
+     done, and do not try other entities on your own.** Say it did not take effect
+     and give the reason from the diagnostics.
+   - "Diagnostics:": tell the person the finding in one sentence (for example "two
+     hallway bulbs are offline, probably switched off at the wall").
+   Send each command once per request. Only send again when the person asks again.
+8. Only when **the person** says it did not work ("nothing happened", "I didn't see
+   any change"), call `phrase_correct(note=<their words>)`, then work out the right
+   command and send it with the same `request`. Never call it because of a
+   "NOT confirmed" result.
 
 Never guess an entity. If nothing matches, or several things could match and it matters
-which, say so briefly.
+which, ask in your reply in one short sentence. The person is often on a phone or a
+speaker and can only answer by talking, so never use a question tool or wait for input.
 
 ## Examples
 
@@ -52,14 +72,16 @@ whose state is on. Do not send a command.
 
 **"Turn the lights on"**: find entities with `type` `light`, then for each:
 
-    send_command(plugin="plugin-virtual", device="dev1", entity="lamp", action="light_turn_on")
+    send_command(plugin="plugin-virtual", device="dev1", entity="lamp", action="light_turn_on",
+                 request="turn the lights on")
 
-Reply: "The lights are on."
+Reply "The lights are on." only when the result says verified.
 
 **"Dim the lamp to half"**: brightness runs from 0 to 254.
 
     send_command(plugin="plugin-virtual", device="dev1", entity="lamp",
-                 action="light_set_brightness", payload="{\"brightness\": 127}")
+                 action="light_set_brightness", payload="{\"brightness\": 127}",
+                 request="dim the lamp to half")
 
 **"good mourning"**: `get_inventory` first. If an intent has the phrase "good
 morning", press it and reply "I heard 'good mourning', running good morning." Only

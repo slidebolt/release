@@ -26,5 +26,8 @@
     "grep": "deny",
     "glob": "deny",
     "list": "deny"
+  },
+  "tools": {
+    "question": false
   }
 }
