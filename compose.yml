@@ -23,6 +23,7 @@ services:
       ZIGBEE_ADAPTER: /dev/zigbee
     volumes:
       - ${SB_DATA_DIR:-./data}:/app/.data
+      - ${TV_RECORDING_DIR:-./recordings}:/recordings
     depends_on:
       ui-db:
         condition: service_healthy

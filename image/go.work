@@ -12,6 +12,7 @@ use (
 	./plugin-esphome
 	./plugin-frigate
 	./plugin-homeassistant
+	./plugin-hdhomerun
 	./plugin-kasa
 	./plugin-intent
 	./plugin-opencode
@@ -33,6 +34,8 @@ use (
 	./sb-messenger
 	./sb-messenger-sdk
 	./sb-runtime
+	./sb-scheduler
+	./sb-scheduler-sdk
 	./sb-script
 	./sb-speech
 	./sb-speech-sdk

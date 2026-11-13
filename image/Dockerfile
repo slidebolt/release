@@ -2,6 +2,7 @@
 FROM golang:1.26-alpine AS builder
 
 WORKDIR /src
+RUN apk add --no-cache ca-certificates git
 COPY release/image/go.work   go.work
 
 # Copy all modules (order: deps first, then dependents)
@@ -20,6 +21,8 @@ COPY sb-manager/           sb-manager/
 COPY sb-messenger/         sb-messenger/
 COPY sb-media-sdk/         sb-media-sdk/
 COPY sb-media/             sb-media/
+COPY sb-scheduler-sdk/     sb-scheduler-sdk/
+COPY sb-scheduler/         sb-scheduler/
 COPY asterisk-host/        asterisk-host/
 COPY sb-speech-sdk/        sb-speech-sdk/
 COPY sb-speech/            sb-speech/
@@ -39,6 +42,7 @@ COPY plugin-asterisk/      plugin-asterisk/
 COPY plugin-automation/    plugin-automation/
 COPY plugin-esphome/       plugin-esphome/
 COPY plugin-frigate/       plugin-frigate/
+COPY plugin-hdhomerun/     plugin-hdhomerun/
 COPY plugin-kasa/          plugin-kasa/
 COPY plugin-system/        plugin-system/
 COPY plugin-wiz/           plugin-wiz/
@@ -56,6 +60,7 @@ RUN cd sb-storage        && go build -o /out/.bin/sb-storage        ./cmd/sb-sto
 RUN cd sb-logging        && go build -o /out/.bin/sb-logging        ./cmd/sb-logging
 RUN cd sb-api            && go build -o /out/.bin/sb-api            ./cmd/sb-api
 RUN cd sb-media          && go build -o /out/.bin/sb-media          ./cmd/sb-media
+RUN cd sb-scheduler      && go build -o /out/.bin/sb-scheduler      ./cmd/sb-scheduler
 RUN cd asterisk-host     && go build -o /out/.bin/asterisk-host     ./cmd/asterisk-host
 RUN cd sb-speech         && go build -o /out/.bin/sb-speech         ./cmd/sb-speech
 RUN cd plugin-intent    && go build -o /out/.bin/plugin-intent    ./cmd/plugin-intent
@@ -70,6 +75,7 @@ RUN cd plugin-automation && go build -o /out/.bin/plugin-automation ./cmd/plugin
 RUN cd plugin-virtual    && go build -o /out/.bin/plugin-virtual    ./cmd/plugin-virtual
 RUN cd plugin-esphome    && go build -o /out/.bin/plugin-esphome    ./cmd/plugin-esphome
 RUN cd plugin-frigate    && go build -o /out/.bin/plugin-frigate    ./cmd/plugin-frigate
+RUN cd plugin-hdhomerun  && go build -o /out/.bin/plugin-hdhomerun  ./cmd/plugin-hdhomerun
 RUN cd plugin-kasa       && go build -o /out/.bin/plugin-kasa       ./cmd/plugin-kasa
 RUN cd plugin-system     && go build -o /out/.bin/plugin-system     ./cmd/plugin-system
 RUN cd plugin-wiz        && go build -o /out/.bin/plugin-wiz        ./cmd/plugin-wiz
@@ -88,6 +94,8 @@ RUN mkdir -p /out/models && \
     curl -fsSL -o /out/models/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
 
 # --- piper for sb-speech replies ---
+# Voices: lessac-high (the best quality; the default in .env.example) and
+# lessac-medium (lighter).
 # The release is built for glibc. It runs on the Alpine runtime through its own
 # glibc loader and libraries, kept in /opt/piper so nothing else uses them.
 FROM debian:bookworm-slim AS piper-build
@@ -101,8 +109,12 @@ RUN curl -fsSL -o /tmp/piper.tgz https://github.com/rhasspy/piper/releases/downl
 RUN mkdir -p /out/piper && cd /out/piper && \
     curl -fsSL -O https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/medium/en_US-lessac-medium.onnx && \
     curl -fsSL -O https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json && \
+    curl -fsSL -O https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/high/en_US-lessac-high.onnx && \
+    curl -fsSL -O https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/high/en_US-lessac-high.onnx.json && \
     printf '%s\n' "5efe09e69902187827af646e1a6e9d269dee769f9877d17b16b1b46eeaaf019f  en_US-lessac-medium.onnx" \
-                   "efe19c417bed055f2d69908248c6ba650fa135bc868b0e6abb3da181dab690a0  en_US-lessac-medium.onnx.json" | sha256sum -c -
+                   "efe19c417bed055f2d69908248c6ba650fa135bc868b0e6abb3da181dab690a0  en_US-lessac-medium.onnx.json" \
+                   "4cabf7c3a638017137f34a1516522032d4fe3f38228a843cc9b764ddcbcd9e09  en_US-lessac-high.onnx" \
+                   "db42b97d9859f257bc1561b8ed980e7fb2398402050a74ddd6cbec931a92412f  en_US-lessac-high.onnx.json" | sha256sum -c -
 
 # --- zigbee-host build (TypeScript + native serial bindings) ---
 FROM node:22-alpine AS zigbee-host-build
@@ -154,7 +166,9 @@ COPY --from=piper-build /opt/piper /opt/piper
 COPY --from=piper-build /out/piper/ /app/models/piper/
 RUN printf '#!/bin/sh\nexec /opt/piper/glibc/ld-linux-x86-64.so.2 --library-path /opt/piper/glibc:/opt/piper /opt/piper/piper --espeak_data /opt/piper/espeak-ng-data "$@"\n' > /usr/local/bin/piper && \
     chmod +x /usr/local/bin/piper && \
-    echo "Testing one two." | piper --model /app/models/piper/en_US-lessac-medium.onnx --output_raw --quiet | head -c 1000 | wc -c | grep -q 1000
+    for v in en_US-lessac-medium en_US-lessac-high; do \
+      echo "Testing one two." | piper --model /app/models/piper/$v.onnx --output_raw --quiet | head -c 1000 | wc -c | grep -q 1000 || exit 1; \
+    done
 COPY --from=builder /out/.bin/      /app/.bin.image/
 COPY ui/package.json ui/pnpm-workspace.yaml ui/pnpm-lock.yaml ui/turbo.json /app/ui/
 COPY ui/apps/api/package.json /app/ui/apps/api/package.json

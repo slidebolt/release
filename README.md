@@ -34,6 +34,7 @@ firewall: SlideBolt is meant for a trusted home network.
 |---|---|
 | A Zigbee USB coordinator | Set `ZIGBEE_ADAPTER` and `COMPOSE_FILE=compose.yml:compose.zigbee.yml` |
 | WiZ or Kasa lights | Set `WIZ_SUBNET` / `KASA_SUBNET` |
+| An HDHomeRun tuner | Set `HDHOMERUN_DEVICES`; recordings are written below `TV_RECORDING_DIR` |
 | ESPHome devices | Set `ESPHOME_API_KEY` (and the dashboard settings to find devices) |
 | Home Assistant | Install [slidebolt-hacs](https://github.com/slidebolt/slidebolt-hacs), set `HA_URL` and `HA_LONG_LIVED_ACCESS_TOKEN` |
 | Asterisk phones | See [stack/asterisk](stack/asterisk/README.md) |
