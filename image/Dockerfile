@@ -43,6 +43,7 @@ COPY plugin-automation/    plugin-automation/
 COPY plugin-esphome/       plugin-esphome/
 COPY plugin-frigate/       plugin-frigate/
 COPY plugin-hdhomerun/     plugin-hdhomerun/
+COPY plugin-plex/          plugin-plex/
 COPY plugin-kasa/          plugin-kasa/
 COPY plugin-system/        plugin-system/
 COPY plugin-wiz/           plugin-wiz/
@@ -76,6 +77,7 @@ RUN cd plugin-virtual    && go build -o /out/.bin/plugin-virtual    ./cmd/plugin
 RUN cd plugin-esphome    && go build -o /out/.bin/plugin-esphome    ./cmd/plugin-esphome
 RUN cd plugin-frigate    && go build -o /out/.bin/plugin-frigate    ./cmd/plugin-frigate
 RUN cd plugin-hdhomerun  && go build -o /out/.bin/plugin-hdhomerun  ./cmd/plugin-hdhomerun
+RUN cd plugin-plex       && go build -o /out/.bin/plugin-plex       ./cmd/plugin-plex
 RUN cd plugin-kasa       && go build -o /out/.bin/plugin-kasa       ./cmd/plugin-kasa
 RUN cd plugin-system     && go build -o /out/.bin/plugin-system     ./cmd/plugin-system
 RUN cd plugin-wiz        && go build -o /out/.bin/plugin-wiz        ./cmd/plugin-wiz
