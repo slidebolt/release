@@ -19,6 +19,7 @@
     {"repository": "plugin-amcrest", "asset": "plugin-amcrest"},
     {"repository": "plugin-androidphone", "asset": "plugin-androidphone"},
     {"repository": "plugin-esphome", "asset": "plugin-esphome"},
+    {"repository": "plugin-hdhomerun", "asset": "plugin-hdhomerun"},
     {"repository": "plugin-homeassistant", "asset": "plugin-homeassistant"},
     {"repository": "plugin-kasa", "asset": "plugin-kasa"},
     {"repository": "plugin-opencode", "asset": "plugin-opencode"},

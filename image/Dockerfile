@@ -159,6 +159,16 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 RUN corepack enable && corepack prepare pnpm@10.28.1 --activate && \
     apk add --no-cache ca-certificates ffmpeg libgomp libstdc++ nginx tzdata
+RUN ffmpeg -version 2>&1 | grep -q 'ffmpeg version' && \
+    ffprobe -version 2>&1 | grep -q 'ffprobe version' && \
+    ffmpeg -hide_banner -encoders 2>&1 | grep -q ' libx264 ' && \
+    ffmpeg -hide_banner -encoders 2>&1 | grep -q ' aac ' && \
+    ffmpeg -hide_banner -muxers 2>&1 | grep -q ' matroska ' && \
+    ffmpeg -hide_banner -muxers 2>&1 | grep -q ' mp4 ' && \
+    ffmpeg -hide_banner -muxers 2>&1 | grep -q ' mpegts ' && \
+    ffmpeg -hide_banner -filters 2>&1 | grep -q ' bwdif ' && \
+    ffmpeg -hide_banner -filters 2>&1 | grep -q ' scale ' && \
+    ffmpeg -hide_banner -filters 2>&1 | grep -q ' setsar '
 
 COPY --from=builder /out/sb-manager /usr/local/bin/sb-manager
 COPY --from=builder /out/sb /usr/local/bin/sb

@@ -86,7 +86,7 @@ func run(manifestPath, versionsPath, outputPath, release string) error {
 	if err != nil {
 		return fmt.Errorf("manager: %w", err)
 	}
-	result := catalog{SchemaVersion: 1, Release: release, Manager: managerArtifacts}
+	result := catalog{SchemaVersion: 2, Release: release, Manager: managerArtifacts}
 	seen := map[string]bool{}
 	for _, item := range definition.Components {
 		version := versions[item.Repository]
