@@ -1,0 +1,28 @@
+{
+  "manager": {
+    "repository": "sb-manager",
+    "asset": "sb-manager"
+  },
+  "components": [
+    {"repository": "sb-messenger", "asset": "sb-messenger"},
+    {"repository": "sb-storage", "asset": "sb-storage"},
+    {"repository": "sb-logging", "asset": "sb-logging"},
+    {"repository": "sb-scheduler", "asset": "sb-scheduler"},
+    {"repository": "sb-virtual", "asset": "sb-virtual"},
+    {"repository": "sb-script", "asset": "sb-script"},
+    {"repository": "sb-api", "asset": "sb-api"},
+    {"repository": "plugin-automation", "asset": "plugin-automation"},
+    {"repository": "plugin-virtual", "asset": "plugin-virtual"},
+    {"repository": "plugin-system", "asset": "plugin-system"},
+    {"repository": "plugin-intent", "asset": "plugin-intent"},
+    {"repository": "plugin-alexa", "asset": "plugin-alexa"},
+    {"repository": "plugin-amcrest", "asset": "plugin-amcrest"},
+    {"repository": "plugin-androidphone", "asset": "plugin-androidphone"},
+    {"repository": "plugin-esphome", "asset": "plugin-esphome"},
+    {"repository": "plugin-homeassistant", "asset": "plugin-homeassistant"},
+    {"repository": "plugin-kasa", "asset": "plugin-kasa"},
+    {"repository": "plugin-opencode", "asset": "plugin-opencode"},
+    {"repository": "plugin-plex", "asset": "plugin-plex"},
+    {"repository": "plugin-wiz", "asset": "plugin-wiz"}
+  ]
+}

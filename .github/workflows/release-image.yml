@@ -56,3 +56,23 @@ jobs:
             docker tag slidebolt:ci "ghcr.io/slidebolt/release:$t"
             docker push "ghcr.io/slidebolt/release:$t"
           done
+
+  quickstart-catalog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: tools/catalog/go.mod
+      - name: Generate catalog from released component contracts
+        working-directory: tools/catalog
+        run: go test ./...
+      - name: Generate released catalog
+        working-directory: tools/catalog
+        run: go run . --manifest ../../quickstart-components.json --versions ../../versions.env --output ../../quickstart-catalog.json --release "${GITHUB_REF_NAME:-development}"
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          files: quickstart-catalog.json
