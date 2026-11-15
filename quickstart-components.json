@@ -22,12 +22,16 @@
     {"repository": "plugin-amcrest", "asset": "plugin-amcrest"},
     {"repository": "plugin-asterisk", "asset": "plugin-asterisk"},
     {"repository": "plugin-androidphone", "asset": "plugin-androidphone"},
+    {"repository": "plugin-androidtv", "asset": "plugin-androidtv"},
     {"repository": "plugin-esphome", "asset": "plugin-esphome"},
+    {"repository": "plugin-frigate", "asset": "plugin-frigate"},
     {"repository": "plugin-hdhomerun", "asset": "plugin-hdhomerun"},
     {"repository": "plugin-homeassistant", "asset": "plugin-homeassistant"},
     {"repository": "plugin-kasa", "asset": "plugin-kasa"},
     {"repository": "plugin-opencode", "asset": "plugin-opencode"},
     {"repository": "plugin-plex", "asset": "plugin-plex"},
-    {"repository": "plugin-wiz", "asset": "plugin-wiz"}
+    {"repository": "plugin-wiz", "asset": "plugin-wiz"},
+    {"repository": "plugin-zigbee", "asset": "plugin-zigbee"},
+    {"repository": "plugin-zigbee2mqtt", "asset": "plugin-zigbee2mqtt"}
   ]
 }

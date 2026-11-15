@@ -35,7 +35,8 @@ jobs:
         run: |
           docker run --rm --entrypoint /bin/sh slidebolt:ci -euc '
             for b in sb-messenger sb-storage sb-logging sb-api sb-script sb-virtual sb-media sb-speech \
-                     asterisk-host plugin-asterisk plugin-opencode plugin-zigbee plugin-automation \
+                     asterisk-host plugin-asterisk plugin-opencode plugin-zigbee plugin-zigbee2mqtt \
+                     plugin-androidtv plugin-frigate plugin-automation \
                      plugin-esphome plugin-wiz plugin-kasa plugin-homeassistant plugin-alexa; do
               test -x /app/.bin.image/$b || { echo "missing $b"; exit 1; }
             done

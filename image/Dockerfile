@@ -51,6 +51,7 @@ COPY plugin-wiz/           plugin-wiz/
 COPY plugin-homeassistant/ plugin-homeassistant/
 COPY plugin-alexa/         plugin-alexa/
 COPY plugin-zigbee/        plugin-zigbee/
+COPY plugin-zigbee2mqtt/   plugin-zigbee2mqtt/
 
 # Build the manager
 RUN cd sb-manager && go build -o /out/sb-manager ./cmd/sb-manager
@@ -86,6 +87,7 @@ RUN cd plugin-wiz        && go build -o /out/.bin/plugin-wiz        ./cmd/plugin
 RUN cd plugin-homeassistant && go build -o /out/.bin/plugin-homeassistant ./cmd/plugin-homeassistant
 RUN cd plugin-alexa       && go build -o /out/.bin/plugin-alexa       ./cmd/plugin-alexa
 RUN cd plugin-zigbee      && go build -o /out/.bin/plugin-zigbee      ./cmd/plugin-zigbee
+RUN cd plugin-zigbee2mqtt && go build -o /out/.bin/plugin-zigbee2mqtt ./cmd/plugin-zigbee2mqtt
 
 # --- zigbee-host build (TypeScript + native serial bindings) ---
 FROM node:22-alpine AS zigbee-host-build
