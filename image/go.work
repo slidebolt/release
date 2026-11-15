@@ -21,6 +21,7 @@ use (
 	./plugin-virtual
 	./plugin-wiz
 	./plugin-zigbee
+	./plugin-zigbee2mqtt
 	./sb-api
 	./sb-cli
 	./sb-contract
