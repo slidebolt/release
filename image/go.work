@@ -13,6 +13,7 @@ use (
 	./plugin-frigate
 	./plugin-homeassistant
 	./plugin-hdhomerun
+	./plugin-jellyfin
 	./plugin-plex
 	./plugin-kasa
 	./plugin-intent

@@ -26,6 +26,7 @@
     {"repository": "plugin-esphome", "asset": "plugin-esphome"},
     {"repository": "plugin-frigate", "asset": "plugin-frigate"},
     {"repository": "plugin-hdhomerun", "asset": "plugin-hdhomerun"},
+    {"repository": "plugin-jellyfin", "asset": "plugin-jellyfin"},
     {"repository": "plugin-homeassistant", "asset": "plugin-homeassistant"},
     {"repository": "plugin-kasa", "asset": "plugin-kasa"},
     {"repository": "plugin-opencode", "asset": "plugin-opencode"},
