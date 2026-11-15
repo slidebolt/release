@@ -40,6 +40,7 @@ firewall: SlideBolt is meant for a trusted home network.
 | Asterisk phones | See [stack/asterisk](stack/asterisk/README.md) |
 | Local speech recognition and synthesis | Add `compose.speech.yml`; see [Speech providers](docs/speech-providers.md) |
 | An OpenCode API key | Set the agent section of `.env` and `COMPOSE_PROFILES=agent`; save the scripts in [stack/scripts](stack/scripts) |
+| A Codex or Claude API key | Set its agent name, credential, MCP token, and choose its full entity key in `INTENT_LISTENERS` |
 
 Leave an integration's settings empty and its plugin stays idle.
 

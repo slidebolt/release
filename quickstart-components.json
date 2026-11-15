@@ -30,6 +30,8 @@
     {"repository": "plugin-homeassistant", "asset": "plugin-homeassistant"},
     {"repository": "plugin-kasa", "asset": "plugin-kasa"},
     {"repository": "plugin-opencode", "asset": "plugin-opencode"},
+    {"repository": "plugin-codex", "asset": "plugin-codex"},
+    {"repository": "plugin-claude", "asset": "plugin-claude"},
     {"repository": "plugin-plex", "asset": "plugin-plex"},
     {"repository": "plugin-wiz", "asset": "plugin-wiz"},
     {"repository": "plugin-zigbee", "asset": "plugin-zigbee"},

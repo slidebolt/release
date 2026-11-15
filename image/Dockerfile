@@ -29,6 +29,8 @@ COPY sb-speech-provider-sdk/ sb-speech-provider-sdk/
 COPY sb-speech/            sb-speech/
 COPY plugin-intent/       plugin-intent/
 COPY plugin-opencode/      plugin-opencode/
+COPY plugin-codex/         plugin-codex/
+COPY plugin-claude/        plugin-claude/
 COPY sb-storage/           sb-storage/
 COPY sb-api/               sb-api/
 COPY sb-testkit/           sb-testkit/
@@ -69,6 +71,8 @@ RUN cd asterisk-host     && go build -o /out/.bin/asterisk-host     ./cmd/asteri
 RUN cd sb-speech         && go build -o /out/.bin/sb-speech         ./cmd/sb-speech
 RUN cd plugin-intent    && go build -o /out/.bin/plugin-intent    ./cmd/plugin-intent
 RUN cd plugin-opencode   && go build -o /out/.bin/plugin-opencode   ./cmd/plugin-opencode
+RUN cd plugin-codex      && go build -o /out/.bin/plugin-codex      ./cmd/plugin-codex
+RUN cd plugin-claude     && go build -o /out/.bin/plugin-claude     ./cmd/plugin-claude
 RUN cd sb-script         && go build -o /out/.bin/sb-script         ./cmd/sb-script
 RUN cd sb-virtual        && go build -o /out/.bin/sb-virtual        ./cmd/sb-virtual
 RUN cd plugin-amcrest    && go build -o /out/.bin/plugin-amcrest    ./cmd/plugin-amcrest
@@ -132,6 +136,9 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 RUN corepack enable && corepack prepare pnpm@10.28.1 --activate && \
     apk add --no-cache ca-certificates ffmpeg libgomp libstdc++ nginx tzdata
+RUN npm install --global --omit=dev @openai/codex@0.169.0 @anthropic-ai/claude-code@2.1.325 && \
+    codex --version | grep -q 'codex-cli 0.169.0' && \
+    claude --version | grep -q '2.1.325 (Claude Code)'
 RUN ffmpeg -version 2>&1 | grep -q 'ffmpeg version' && \
     ffprobe -version 2>&1 | grep -q 'ffprobe version' && \
     ffmpeg -hide_banner -encoders 2>&1 | grep -q ' libx264 ' && \

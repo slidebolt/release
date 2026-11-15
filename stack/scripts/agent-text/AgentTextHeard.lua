@@ -11,6 +11,8 @@ Automation("AgentTextHeard", {
   lastAt = s.at
   local session = "text-" .. s.from
   ctx.decision("texted", { from = s.from, session = session })
+  ctx.send({ key = "plugin-asterisk.ext_4000.messages" }, "sip_message_send",
+           { to = s.from, text = "Working on it." })
   ctx.send(ctx.queryOne("plugin-intent.listener_text.prompt"), "agent_prompt",
            { text = s.text, session = session })
 end)

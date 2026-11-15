@@ -41,7 +41,8 @@ if [[ -n "$pin" ]]; then
   out="$(mktemp)"
   { echo "# The tag of every repo in the image. Written by: build.sh --pin <workspace>"
     for r in $(repos); do
-      t="$(git -C "$pin/$r" describe --tags --exact-match HEAD 2>/dev/null)" || die "$r: HEAD is not on a tag"
+      t="$(git -C "$pin/$r" tag --points-at HEAD --sort=-v:refname | head -1)"
+      [[ -n "$t" ]] || die "$r: HEAD is not on a tag"
       echo "$r=$t"
     done; } >"$out"
   mv "$out" "$here/versions.env"

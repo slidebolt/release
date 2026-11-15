@@ -18,6 +18,8 @@ use (
 	./plugin-kasa
 	./plugin-intent
 	./plugin-opencode
+	./plugin-codex
+	./plugin-claude
 	./plugin-system
 	./plugin-virtual
 	./plugin-wiz
