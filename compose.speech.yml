@@ -1,0 +1,42 @@
+# Optional isolated speech engines. The main SlideBolt service uses the same
+# generic provider URLs for these containers or any operator-supplied provider.
+services:
+  slidebolt:
+    environment:
+      SPEECH_TRANSCRIBER_URL: http://127.0.0.1:${SPEECH_WHISPER_PORT:-29021}
+      SPEECH_SYNTHESIZER_URL: http://127.0.0.1:${SPEECH_PIPER_PORT:-29022}
+    depends_on:
+      speech-whisper:
+        condition: service_healthy
+      speech-piper:
+        condition: service_healthy
+
+  speech-whisper:
+    image: ghcr.io/slidebolt/speech-provider-whisper:${SPEECH_PROVIDER_VERSION:-v1.0.1}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${SPEECH_WHISPER_PORT:-29021}:8080"
+    healthcheck:
+      test: ["CMD", "speech-provider-whisper", "--healthcheck", "http://127.0.0.1:8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  speech-piper:
+    image: ghcr.io/slidebolt/speech-provider-piper:${SPEECH_PROVIDER_VERSION:-v1.0.1}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${SPEECH_PIPER_PORT:-29022}:8080"
+    healthcheck:
+      test: ["CMD", "speech-provider-piper", "--healthcheck", "http://127.0.0.1:8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    deploy:
+      resources:
+        limits:
+          memory: 1G

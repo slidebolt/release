@@ -38,6 +38,7 @@ firewall: SlideBolt is meant for a trusted home network.
 | ESPHome devices | Set `ESPHOME_API_KEY` (and the dashboard settings to find devices) |
 | Home Assistant | Install [slidebolt-hacs](https://github.com/slidebolt/slidebolt-hacs), set `HA_URL` and `HA_LONG_LIVED_ACCESS_TOKEN` |
 | Asterisk phones | See [stack/asterisk](stack/asterisk/README.md) |
+| Local speech recognition and synthesis | Add `compose.speech.yml`; see [Speech providers](docs/speech-providers.md) |
 | An OpenCode API key | Set the agent section of `.env` and `COMPOSE_PROFILES=agent`; save the scripts in [stack/scripts](stack/scripts) |
 
 Leave an integration's settings empty and its plugin stays idle.
@@ -54,7 +55,7 @@ Pin `SLIDEBOLT_VERSION` in `.env` to stay on one release.
 
 | Path | What |
 |---|---|
-| `compose.yml`, `compose.zigbee.yml`, `.env.example` | Running SlideBolt |
+| `compose.yml`, `compose.zigbee.yml`, `compose.speech.yml`, `.env.example` | Running SlideBolt |
 | `image/` | The image: Dockerfile, entrypoint, nginx config, UI database bootstrap, `go.work` |
 | `versions.env` | The tag of every repo in the image |
 | `build.sh` | Builds the image from those tags, or from a local workspace |

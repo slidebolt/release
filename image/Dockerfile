@@ -25,6 +25,7 @@ COPY sb-scheduler-sdk/     sb-scheduler-sdk/
 COPY sb-scheduler/         sb-scheduler/
 COPY asterisk-host/        asterisk-host/
 COPY sb-speech-sdk/        sb-speech-sdk/
+COPY sb-speech-provider-sdk/ sb-speech-provider-sdk/
 COPY sb-speech/            sb-speech/
 COPY plugin-intent/       plugin-intent/
 COPY plugin-opencode/      plugin-opencode/
@@ -86,38 +87,6 @@ RUN cd plugin-homeassistant && go build -o /out/.bin/plugin-homeassistant ./cmd/
 RUN cd plugin-alexa       && go build -o /out/.bin/plugin-alexa       ./cmd/plugin-alexa
 RUN cd plugin-zigbee      && go build -o /out/.bin/plugin-zigbee      ./cmd/plugin-zigbee
 
-# --- whisper.cpp for sb-speech ---
-FROM node:22-alpine AS whisper-build
-RUN apk add --no-cache build-base cmake git curl
-RUN git clone --depth 1 --branch v1.7.6 https://github.com/ggml-org/whisper.cpp /src/whisper && \
-    cmake -S /src/whisper -B /src/whisper/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DGGML_NATIVE=OFF && \
-    cmake --build /src/whisper/build --target whisper-cli -j
-RUN mkdir -p /out/models && \
-    curl -fsSL -o /out/models/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
-
-# --- piper for sb-speech replies ---
-# Voices: lessac-high (the best quality; the default in .env.example) and
-# lessac-medium (lighter).
-# The release is built for glibc. It runs on the Alpine runtime through its own
-# glibc loader and libraries, kept in /opt/piper so nothing else uses them.
-FROM debian:bookworm-slim AS piper-build
-RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends curl ca-certificates >/dev/null && rm -rf /var/lib/apt/lists/*
-RUN curl -fsSL -o /tmp/piper.tgz https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz && \
-    echo "a50cb45f355b7af1f6d758c1b360717877ba0a398cc8cbe6d2a7a3a26e225992  /tmp/piper.tgz" | sha256sum -c - && \
-    tar -xzf /tmp/piper.tgz -C /opt && rm /tmp/piper.tgz && \
-    mkdir /opt/piper/glibc && \
-    for l in ld-linux-x86-64.so.2 libc.so.6 libm.so.6 libpthread.so.0 libdl.so.2 librt.so.1 libgcc_s.so.1; do cp -L /lib/x86_64-linux-gnu/$l /opt/piper/glibc/; done && \
-    cp -L /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/piper/glibc/
-RUN mkdir -p /out/piper && cd /out/piper && \
-    curl -fsSL -O https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/medium/en_US-lessac-medium.onnx && \
-    curl -fsSL -O https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json && \
-    curl -fsSL -O https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/high/en_US-lessac-high.onnx && \
-    curl -fsSL -O https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/high/en_US-lessac-high.onnx.json && \
-    printf '%s\n' "5efe09e69902187827af646e1a6e9d269dee769f9877d17b16b1b46eeaaf019f  en_US-lessac-medium.onnx" \
-                   "efe19c417bed055f2d69908248c6ba650fa135bc868b0e6abb3da181dab690a0  en_US-lessac-medium.onnx.json" \
-                   "4cabf7c3a638017137f34a1516522032d4fe3f38228a843cc9b764ddcbcd9e09  en_US-lessac-high.onnx" \
-                   "db42b97d9859f257bc1561b8ed980e7fb2398402050a74ddd6cbec931a92412f  en_US-lessac-high.onnx.json" | sha256sum -c -
-
 # --- zigbee-host build (TypeScript + native serial bindings) ---
 FROM node:22-alpine AS zigbee-host-build
 RUN apk add --no-cache python3 make g++ linux-headers
@@ -172,15 +141,6 @@ RUN ffmpeg -version 2>&1 | grep -q 'ffmpeg version' && \
 
 COPY --from=builder /out/sb-manager /usr/local/bin/sb-manager
 COPY --from=builder /out/sb /usr/local/bin/sb
-COPY --from=whisper-build /src/whisper/build/bin/whisper-cli /usr/local/bin/whisper-cli
-COPY --from=whisper-build /out/models/ /app/models/
-COPY --from=piper-build /opt/piper /opt/piper
-COPY --from=piper-build /out/piper/ /app/models/piper/
-RUN printf '#!/bin/sh\nexec /opt/piper/glibc/ld-linux-x86-64.so.2 --library-path /opt/piper/glibc:/opt/piper /opt/piper/piper --espeak_data /opt/piper/espeak-ng-data "$@"\n' > /usr/local/bin/piper && \
-    chmod +x /usr/local/bin/piper && \
-    for v in en_US-lessac-medium en_US-lessac-high; do \
-      echo "Testing one two." | piper --model /app/models/piper/$v.onnx --output_raw --quiet | head -c 1000 | wc -c | grep -q 1000 || exit 1; \
-    done
 COPY --from=builder /out/.bin/      /app/.bin.image/
 COPY ui/package.json ui/pnpm-workspace.yaml ui/pnpm-lock.yaml ui/turbo.json /app/ui/
 COPY ui/apps/api/package.json /app/ui/apps/api/package.json

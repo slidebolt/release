@@ -23,6 +23,7 @@ jobs:
           cp .env.example .env
           sed -i 's/^UI_DB_PASSWORD=$/UI_DB_PASSWORD=ci/; s/^UI_SESSION_SECRET=$/UI_SESSION_SECRET=ci/' .env
           docker compose -f compose.yml config -q
+          docker compose -f compose.yml -f compose.speech.yml config -q
           ZIGBEE_ADAPTER=/dev/null docker compose -f compose.yml -f compose.zigbee.yml config -q
           COMPOSE_PROFILES=agent docker compose -f compose.yml config -q
           rm .env
@@ -40,8 +41,10 @@ jobs:
             done
             test -x /usr/local/bin/sb-manager
             test -x /usr/local/bin/sb
-            test -x /usr/local/bin/whisper-cli
-            test -x /usr/local/bin/piper
+            ! command -v whisper-cli
+            ! command -v whisper-server
+            ! command -v piper
+            test ! -d /app/models
             test -f /app/zigbee-host/dist/host.js
             test -f /app/ui/apps/api/dist/index.js
             test -f /usr/share/nginx/html/index.html

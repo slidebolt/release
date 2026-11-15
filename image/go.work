@@ -39,6 +39,7 @@ use (
 	./sb-scheduler-sdk
 	./sb-script
 	./sb-speech
+	./sb-speech-provider-sdk
 	./sb-speech-sdk
 	./sb-storage
 	./sb-storage-sdk
