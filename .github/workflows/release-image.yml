@@ -49,6 +49,9 @@ jobs:
             test -f /app/zigbee-host/dist/host.js
             test -f /app/ui/apps/api/dist/index.js
             test -f /usr/share/nginx/html/index.html
+            nginx -t
+            grep -q "location = /openapi.json" /etc/nginx/http.d/default.conf
+            grep -q "location = /openapi.yaml" /etc/nginx/http.d/default.conf
             grep -q "\"mode\":\"tags\"" /app/build-manifest.json
           '
 
