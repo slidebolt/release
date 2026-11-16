@@ -2,6 +2,9 @@
 set -eu
 
 cleanup() {
+  if [ -n "${NGINX_PID:-}" ] && kill -0 "$NGINX_PID" 2>/dev/null; then
+    kill "$NGINX_PID" 2>/dev/null || true
+  fi
   if [ -n "${ZIGBEE_HOST_PID:-}" ] && kill -0 "$ZIGBEE_HOST_PID" 2>/dev/null; then
     kill "$ZIGBEE_HOST_PID" 2>/dev/null || true
   fi
@@ -81,4 +84,19 @@ cd /app/ui/apps/api
 node dist/index.js &
 UI_API_PID=$!
 
-exec nginx -g 'daemon off;'
+nginx -g 'daemon off;' &
+NGINX_PID=$!
+
+# Keep the container lifecycle tied to every infrastructure process. Managed
+# components are isolated and supervised by sb-manager, but if the manager,
+# UI API, Zigbee host, or web server itself exits, fail the container so the
+# Docker restart policy can recover the complete application.
+while kill -0 "$MANAGER_PID" 2>/dev/null \
+  && kill -0 "$UI_API_PID" 2>/dev/null \
+  && kill -0 "$ZIGBEE_HOST_PID" 2>/dev/null \
+  && kill -0 "$NGINX_PID" 2>/dev/null; do
+  sleep 2
+done
+
+echo "critical SlideBolt process exited; stopping container for restart" >&2
+exit 1

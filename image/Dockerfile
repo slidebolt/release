@@ -178,6 +178,9 @@ COPY release/image/nginx.conf /etc/nginx/http.d/default.conf
 COPY release/image/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+HEALTHCHECK --interval=10s --timeout=5s --start-period=90s --retries=3 \
+  CMD node -e 'Promise.all([fetch("http://127.0.0.1:29010/status/components"),fetch((process.env.CORE_API_URL||"http://127.0.0.1:29011")+"/openapi.json")]).then((responses)=>process.exit(responses.every((response)=>response.ok)?0:1)).catch(()=>process.exit(1))'
+
 # What this image was built from. release/build.sh passes the release and the
 # commit of every repo; plain docker builds get an empty manifest.
 ARG SB_BUILD_ID=unversioned
