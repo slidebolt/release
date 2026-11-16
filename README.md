@@ -20,6 +20,10 @@ docker compose up -d
 Open `http://<this machine>:49101`. The setup page connects the UI to SlideBolt
 and creates its first admin token; then create your UI account.
 
+Android and other native clients can use LAN discovery and code pairing once
+`SB_API_PUBLIC_URL` points at the installation's trusted HTTPS `/core` route.
+See [the Android client quickstart](docs/android-client.md).
+
 Data lives in `./data` (`SB_DATA_DIR`). Back it up, and the `ui-db-data` volume,
 to keep devices, scripts and accounts.
 

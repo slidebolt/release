@@ -20,6 +20,8 @@ services:
       DATABASE_URL: postgresql://slidebolt:${UI_DB_PASSWORD:?set UI_DB_PASSWORD in .env}@127.0.0.1:${UI_DB_PORT:-5438}/slidebolt
       SESSION_SECRET: ${UI_SESSION_SECRET:?set UI_SESSION_SECRET in .env}
       CORE_API_URL: http://127.0.0.1:${SB_API_PORT:-29011}
+      SB_API_PUBLIC_URL: ${SB_API_PUBLIC_URL:-}
+      SB_SYSTEM_NAME: ${SB_SYSTEM_NAME:-SlideBolt}
       ZIGBEE_ADAPTER: /dev/zigbee
     volumes:
       - ${SB_DATA_DIR:-./data}:/app/.data
