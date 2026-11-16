@@ -6,7 +6,7 @@ not add plugin-specific logic to the app.
 
 ## Discover and pair
 
-1. Use Android NSD to browse `_slidebolt._tcp.local`.
+1. Use Android NSD to browse `_slidebolt-api._tcp.local`.
 2. Read the `api` TXT value and request `<api>/.well-known/slidebolt`.
 3. `POST <api>/pairing/requests` with a client name and type.
 4. Display the returned `code`; an administrator enters it on the Clients page.
