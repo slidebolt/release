@@ -78,8 +78,12 @@ Every component repo is released first, layer by layer (see the workspace's
 git commit -am "release vX.Y.Z" && git tag vX.Y.Z && git push origin main vX.Y.Z
 ```
 
-CI builds the image from `versions.env` with `./build.sh`, checks it, and
-publishes `ghcr.io/slidebolt/release:vX.Y.Z` and `:latest`.
+Component tags publish their portable binaries first. The standalone Jenkins
+candidate job then builds and tests the complete product. Its promotion job
+waits for every component asset, publishes the immutable
+`ghcr.io/slidebolt/release:vX.Y.Z` image and GitHub Release assets, verifies
+them, and only then advances `:latest`. GitHub Actions remains a read-only
+independent build check and is not a second publisher.
 
 Every image carries `/app/build-manifest.json`: the release and the commit of
 every repo it was built from.

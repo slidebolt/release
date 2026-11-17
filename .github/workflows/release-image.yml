@@ -1,20 +1,18 @@
 name: Release Image
 
-# Builds the image from the tags in versions.env. Every push and pull request
-# checks that it builds; a v* tag also publishes it.
+# Builds the image from the tags in versions.env. Final publication is owned by
+# the standalone slidebolt-ci promotion job after its end-to-end proof.
 on:
   workflow_dispatch:
   pull_request:
   push:
     branches: [main]
-    tags: ["v*"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
     steps:
       - uses: actions/checkout@v4
 
@@ -55,19 +53,10 @@ jobs:
             grep -q "\"mode\":\"tags\"" /app/build-manifest.json
           '
 
-      - name: Publish
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-          for t in "${GITHUB_REF_NAME}" latest; do
-            docker tag slidebolt:ci "ghcr.io/slidebolt/release:$t"
-            docker push "ghcr.io/slidebolt/release:$t"
-          done
-
   quickstart-catalog:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -79,7 +68,3 @@ jobs:
       - name: Generate released catalog
         working-directory: tools/catalog
         run: go run . --manifest ../../quickstart-components.json --versions ../../versions.env --output ../../quickstart-catalog.json --release "${GITHUB_REF_NAME:-development}"
-      - uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/v')
-        with:
-          files: quickstart-catalog.json
