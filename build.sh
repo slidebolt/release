@@ -102,6 +102,6 @@ print(json.dumps({"build_id": sys.argv[1], "release": sys.argv[2], "mode": sys.a
 )"
 
 log "building $image ($mode, release $release_version)"
-docker build -f "$build_ctx/release/image/Dockerfile" -t "$image" \
+DOCKER_BUILDKIT=1 docker build -f "$build_ctx/release/image/Dockerfile" -t "$image" \
   --build-arg SB_BUILD_ID="$build_id" --build-arg SB_BUILD_MANIFEST="$manifest" "$build_ctx"
 log "built $image"
