@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.7
 # Multi-stage build: compile all binaries, then run with manager.
 FROM golang:1.26-alpine AS builder
 
@@ -57,50 +58,50 @@ COPY plugin-zigbee/        plugin-zigbee/
 COPY plugin-zigbee2mqtt/   plugin-zigbee2mqtt/
 
 # Build the manager
-RUN cd sb-manager && go build -o /out/sb-manager ./cmd/sb-manager
-RUN cd sb-cli && go build -o /out/sb ./cmd/sb-cli
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd sb-manager && go build -o /out/sb-manager ./cmd/sb-manager
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd sb-cli && go build -o /out/sb ./cmd/sb-cli
 
 # Build all service and plugin binaries into .bin/
-RUN cd sb-messenger      && go build -o /out/.bin/sb-messenger      ./cmd/sb-messenger
-RUN cd sb-storage        && go build -o /out/.bin/sb-storage        ./cmd/sb-storage
-RUN cd sb-logging        && go build -o /out/.bin/sb-logging        ./cmd/sb-logging
-RUN cd sb-api            && go build -o /out/.bin/sb-api            ./cmd/sb-api
-RUN cd sb-media          && go build -o /out/.bin/sb-media          ./cmd/sb-media
-RUN cd sb-scheduler      && go build -o /out/.bin/sb-scheduler      ./cmd/sb-scheduler
-RUN cd asterisk-host     && go build -o /out/.bin/asterisk-host     ./cmd/asterisk-host
-RUN cd sb-speech         && go build -o /out/.bin/sb-speech         ./cmd/sb-speech
-RUN cd plugin-intent    && go build -o /out/.bin/plugin-intent    ./cmd/plugin-intent
-RUN cd plugin-opencode   && go build -o /out/.bin/plugin-opencode   ./cmd/plugin-opencode
-RUN cd plugin-codex      && go build -o /out/.bin/plugin-codex      ./cmd/plugin-codex
-RUN cd plugin-claude     && go build -o /out/.bin/plugin-claude     ./cmd/plugin-claude
-RUN cd sb-script         && go build -o /out/.bin/sb-script         ./cmd/sb-script
-RUN cd sb-virtual        && go build -o /out/.bin/sb-virtual        ./cmd/sb-virtual
-RUN cd plugin-amcrest    && go build -o /out/.bin/plugin-amcrest    ./cmd/plugin-amcrest
-RUN cd plugin-androidphone && go build -o /out/.bin/plugin-androidphone ./cmd/plugin-androidphone
-RUN cd plugin-androidtv  && go build -o /out/.bin/plugin-androidtv  ./cmd/plugin-androidtv
-RUN cd plugin-asterisk   && go build -o /out/.bin/plugin-asterisk   ./cmd/plugin-asterisk
-RUN cd plugin-automation && go build -o /out/.bin/plugin-automation ./cmd/plugin-automation
-RUN cd plugin-virtual    && go build -o /out/.bin/plugin-virtual    ./cmd/plugin-virtual
-RUN cd plugin-esphome    && go build -o /out/.bin/plugin-esphome    ./cmd/plugin-esphome
-RUN cd plugin-frigate    && go build -o /out/.bin/plugin-frigate    ./cmd/plugin-frigate
-RUN cd plugin-hdhomerun  && go build -o /out/.bin/plugin-hdhomerun  ./cmd/plugin-hdhomerun
-RUN cd plugin-jellyfin   && go build -o /out/.bin/plugin-jellyfin   ./cmd/plugin-jellyfin
-RUN cd plugin-plex       && go build -o /out/.bin/plugin-plex       ./cmd/plugin-plex
-RUN cd plugin-kasa       && go build -o /out/.bin/plugin-kasa       ./cmd/plugin-kasa
-RUN cd plugin-system     && go build -o /out/.bin/plugin-system     ./cmd/plugin-system
-RUN cd plugin-wiz        && go build -o /out/.bin/plugin-wiz        ./cmd/plugin-wiz
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd sb-messenger      && go build -o /out/.bin/sb-messenger      ./cmd/sb-messenger
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd sb-storage        && go build -o /out/.bin/sb-storage        ./cmd/sb-storage
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd sb-logging        && go build -o /out/.bin/sb-logging        ./cmd/sb-logging
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd sb-api            && go build -o /out/.bin/sb-api            ./cmd/sb-api
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd sb-media          && go build -o /out/.bin/sb-media          ./cmd/sb-media
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd sb-scheduler      && go build -o /out/.bin/sb-scheduler      ./cmd/sb-scheduler
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd asterisk-host     && go build -o /out/.bin/asterisk-host     ./cmd/asterisk-host
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd sb-speech         && go build -o /out/.bin/sb-speech         ./cmd/sb-speech
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-intent    && go build -o /out/.bin/plugin-intent    ./cmd/plugin-intent
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-opencode   && go build -o /out/.bin/plugin-opencode   ./cmd/plugin-opencode
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-codex      && go build -o /out/.bin/plugin-codex      ./cmd/plugin-codex
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-claude     && go build -o /out/.bin/plugin-claude     ./cmd/plugin-claude
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd sb-script         && go build -o /out/.bin/sb-script         ./cmd/sb-script
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd sb-virtual        && go build -o /out/.bin/sb-virtual        ./cmd/sb-virtual
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-amcrest    && go build -o /out/.bin/plugin-amcrest    ./cmd/plugin-amcrest
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-androidphone && go build -o /out/.bin/plugin-androidphone ./cmd/plugin-androidphone
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-androidtv  && go build -o /out/.bin/plugin-androidtv  ./cmd/plugin-androidtv
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-asterisk   && go build -o /out/.bin/plugin-asterisk   ./cmd/plugin-asterisk
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-automation && go build -o /out/.bin/plugin-automation ./cmd/plugin-automation
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-virtual    && go build -o /out/.bin/plugin-virtual    ./cmd/plugin-virtual
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-esphome    && go build -o /out/.bin/plugin-esphome    ./cmd/plugin-esphome
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-frigate    && go build -o /out/.bin/plugin-frigate    ./cmd/plugin-frigate
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-hdhomerun  && go build -o /out/.bin/plugin-hdhomerun  ./cmd/plugin-hdhomerun
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-jellyfin   && go build -o /out/.bin/plugin-jellyfin   ./cmd/plugin-jellyfin
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-plex       && go build -o /out/.bin/plugin-plex       ./cmd/plugin-plex
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-kasa       && go build -o /out/.bin/plugin-kasa       ./cmd/plugin-kasa
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-system     && go build -o /out/.bin/plugin-system     ./cmd/plugin-system
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-wiz        && go build -o /out/.bin/plugin-wiz        ./cmd/plugin-wiz
 
-RUN cd plugin-homeassistant && go build -o /out/.bin/plugin-homeassistant ./cmd/plugin-homeassistant
-RUN cd plugin-alexa       && go build -o /out/.bin/plugin-alexa       ./cmd/plugin-alexa
-RUN cd plugin-zigbee      && go build -o /out/.bin/plugin-zigbee      ./cmd/plugin-zigbee
-RUN cd plugin-zigbee2mqtt && go build -o /out/.bin/plugin-zigbee2mqtt ./cmd/plugin-zigbee2mqtt
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-homeassistant && go build -o /out/.bin/plugin-homeassistant ./cmd/plugin-homeassistant
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-alexa       && go build -o /out/.bin/plugin-alexa       ./cmd/plugin-alexa
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-zigbee      && go build -o /out/.bin/plugin-zigbee      ./cmd/plugin-zigbee
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build cd plugin-zigbee2mqtt && go build -o /out/.bin/plugin-zigbee2mqtt ./cmd/plugin-zigbee2mqtt
 
 # --- zigbee-host build (TypeScript + native serial bindings) ---
 FROM node:22-alpine AS zigbee-host-build
 RUN apk add --no-cache python3 make g++ linux-headers
 WORKDIR /src/zigbee-host
 COPY zigbee-host/package.json zigbee-host/package-lock.json ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 COPY zigbee-host/tsconfig.json ./
 COPY zigbee-host/src ./src
 RUN npm run build && npm prune --omit=dev
@@ -117,7 +118,7 @@ COPY ui/package.json ui/pnpm-workspace.yaml ui/pnpm-lock.yaml ui/turbo.json ./
 COPY ui/apps/api/package.json ./apps/api/
 COPY ui/apps/web/package.json ./apps/web/
 COPY ui/packages/database/package.json ./packages/database/
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile
 
 FROM ui-deps AS ui-build
 
@@ -136,7 +137,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 RUN corepack enable && corepack prepare pnpm@10.28.1 --activate && \
     apk add --no-cache ca-certificates ffmpeg libgomp libstdc++ nginx tzdata
-RUN npm install --global --omit=dev @openai/codex@0.169.0 @anthropic-ai/claude-code@2.1.325 && \
+RUN --mount=type=cache,target=/root/.npm npm install --global --omit=dev @openai/codex@0.169.0 @anthropic-ai/claude-code@2.1.325 && \
     codex --version | grep -q 'codex-cli 0.169.0' && \
     claude --version | grep -q '2.1.325 (Claude Code)'
 RUN ffmpeg -version 2>&1 | grep -q 'ffmpeg version' && \
@@ -159,7 +160,7 @@ COPY ui/apps/web/package.json /app/ui/apps/web/package.json
 COPY ui/packages/database/package.json /app/ui/packages/database/package.json
 COPY ui/packages/database/drizzle.config.ts /app/ui/packages/database/drizzle.config.ts
 COPY ui/packages/database/src /app/ui/packages/database/src
-RUN cd /app/ui && pnpm install --frozen-lockfile
+RUN --mount=type=cache,target=/pnpm/store cd /app/ui && pnpm install --frozen-lockfile
 COPY --from=ui-build /src/ui/apps/api/dist /app/ui/apps/api/dist
 COPY --from=ui-build /src/ui/packages/database/dist /app/ui/packages/database/dist
 COPY --from=ui-build /src/ui/apps/web/dist /usr/share/nginx/html
